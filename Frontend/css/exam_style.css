@@ -1,0 +1,11 @@
+.modal-right {
+    position: fixed;
+    right: 10%;
+    top: 10%;
+    transform: translateY(-50%);
+    margin: 0; /* Remove default margin */
+}
+
+.modal-right {
+    width: 450px; /* Set desired width */
+}
