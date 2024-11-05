@@ -45,8 +45,8 @@
         <div class="navbar-nav ms-auto p-4 p-lg-0">
             <a href="dashboard_doctor.html" class="nav-item nav-link active">Dashboard</a>
             <a href="about.html" class="nav-item nav-link">Patient Records</a>
-            <a href="filter.html" class="nav-item nav-link">Filter Test Results</a>
-            <a href="service.html" class="nav-item nav-link">Health Monitoring</a>
+            <a href="filter.html" class="nav-item nav-link">Reports</a>
+            <a href="setMonitering.html" class="nav-item nav-link">Set Monitoring</a>
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     Your Account
@@ -57,6 +57,7 @@
                     <a href="404.html" class="dropdown-item">Sign out</a>
                 </div>
             </div>
+            <a href="Exam.html" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Prescribe Exam<i class="fa fa-arrow-right ms-3"></i></a>
         </div>
     </div>
 </nav>
@@ -85,24 +86,6 @@
                 <!-- Alerts will be loaded here by JavaScript -->
             </ul>
         </section>
-
-        <section class="health-monitoring">
-            <h3>Set Up Health Monitoring</h3>
-            <form id="monitoringForm">
-                <label for="patientName">Patient Name:</label>
-                <input type="text" id="patientName" required>
-                <label for="patientID">Patient ID:</label>
-                <input type="text" id="patientName" required>
-                <label for="monitoringType">Monitoring Type:</label>
-                <select id="monitoringType" required>
-                    <option value="Liver Function">Liver Function</option>
-                    <option value="Renal Function">Renal Function</option>
-                    <!-- Add more options as needed -->
-                </select>
-                <button type="submit">Set Monitoring</button>
-            </form>
-        </section>
-    </div>
     <!-- Dashboard Content End -->
 
     <script src="js/doctorDashboard.js"></script>
