@@ -1,4 +1,4 @@
-<<<<<<< HEAD:js/main.js
+
 (function ($) {
     "use strict";
 
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Send formData using fetch or XMLHttpRequest
         });
 });
-=======
+
 (function ($) {
     "use strict";
 
@@ -465,4 +465,3 @@ profileUserInfo.addEventListener('submit', (e) => {
     }
 });
 
->>>>>>> origin/main:Frontend/js/main.js
