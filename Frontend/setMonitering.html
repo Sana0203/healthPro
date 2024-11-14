@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthPro - Doctor Dashboard</title>
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Roboto:wght@500;700;900&display=swap" rel="stylesheet"> 
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <!-- Customized Stylesheets -->
+    <link rel="stylesheet" href="css/doctorDashboard.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 wow fadeIn" data-wow-delay="0.1s">
+        <a href="dashboard_doctor.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <h1 class="m-0 text-primary"><i class="far fa-hospital me-3"></i>HealthPro</h1>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="dashboard_doctor.html" class="nav-item nav-link active">Dashboard</a>
+                <a href="about.html" class="nav-item nav-link">Patient Records</a>
+                <a href="filter.html" class="nav-item nav-link">Reports</a>
+                <a href="setMonitering.html" class="nav-item nav-link">Set Monitoring</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        Your Account
+                    </a>
+                    <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                        <a href="profile.html" class="dropdown-item">Profile</a>
+                        <a href="404.html" class="dropdown-item">Setting</a>
+                        <a href="404.html" class="dropdown-item">Sign out</a>
+                    </div>
+                </div>
+                <a href="Exam.html" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Prescribe Exam<i class="fa fa-arrow-right ms-3"></i></a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Dashboard Content Start -->
+    <div class="dashboard">
+        <section class="health-monitoring">
+            <h3>Set Up Health Monitoring</h3>
+            <form id="monitoringForm">
+                <div class="mb-3">
+                    <label for="patientName" class="form-label">Patient Name:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="patientName" required>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                <i class="fas fa-search" style="color: rgb(154, 160, 166); font-size: 18px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="healthId" class="form-label">Health ID</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="healthId" required>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                <i class="fas fa-search" style="color: rgb(154, 160, 166); font-size: 18px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="monitoringType" class="form-label">Monitoring Type:</label>
+                    <select class="form-control" id="monitoringType" required>
+                        <option value="Liver Function">Liver Function</option>
+                        <option value="Renal Function">Renal Function</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="monitoringFrequency" class="form-label">Monitoring Frequency:</label>
+                    <select class="form-control" id="monitoringFrequency" required>
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Set Monitoring</button>
+                </div>
+            </form>
+        </section>
+    </div>
+    <!-- Dashboard Content End -->
+
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="searchForm">
+                        <div class="mb-3">
+                            <label for="searchInput" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by health ID or name...">
+                        </div>
+                    </form>
+                    <div id="resultsContainer" class="results mt-4">
+                        <div id="resultsButtonContainer" class="d-flex flex-wrap">
+                            <!-- Dynamic buttons will be added here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeSearchModal">Close</button>
+                    <button type="button" class="btn btn-primary" id="searchButton">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/doctorDashboard.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/setMonitering_script.js"></script>
+</body>
+</html>

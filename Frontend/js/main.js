@@ -1,4 +1,3 @@
-
 (function ($) {
     "use strict";
 
@@ -287,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Send formData using fetch or XMLHttpRequest
         });
 });
+
 
 (function ($) {
     "use strict";

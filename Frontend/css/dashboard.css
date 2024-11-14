@@ -1,0 +1,40 @@
+/* Header */
+.dashboard-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Dashboard Section Styling */
+.dashboard-section {
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Headings */
+.dashboard-section h3 {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Lists */
+.dashboard-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.dashboard-section ul li {
+    margin-bottom: 10px;
+}
+
+/* Link Styling */
+.dashboard-section a {
+    color: #4CAF50;
+}
+
+.dashboard-section a:hover {
+    color: #388E3C;
+}
