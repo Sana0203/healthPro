@@ -48,3 +48,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+document.getElementById('monitoringForm').addEventListener('submit', function(event) {
+    // Prevent the form from submitting the traditional way
+    event.preventDefault();
+
+    // Get the values from the form inputs
+    const healthId = document.getElementById('healthId').value;
+    const patientName = document.getElementById('patientName').value;
+    const monitoringType = document.getElementById('monitoringType').value;
+    const monitoringFrequency = document.getElementById('monitoringFrequency').value;
+
+    // Create a new row for the table
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${healthId}</td>
+        <td>${patientName}</td>
+        <td>${monitoringType}</td>
+        <td>${monitoringFrequency}</td>
+    `;
+
+    // Append the new row to the MonitoringTable
+    document.querySelector('#MonitoringTable tbody').appendChild(newRow);
+
+    // Optionally, clear the form fields after submission
+    document.getElementById('monitoringForm').reset();
+});
