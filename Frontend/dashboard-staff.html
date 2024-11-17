@@ -42,9 +42,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="dashboard-staff.html" class="nav-item nav-link active">Dashboard</a>
-            <a href="about.html" class="nav-item nav-link">Patient Records</a>
-            <a href="service.html" class="nav-item nav-link">Messages</a>
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     Your Account
@@ -66,44 +63,11 @@
 
         <nav class="dashboard-nav">
             <ul>
-                <li><a href="#view-results">View Exam Results</a></li>
                 <li><a href="#modify-results">Modify Exam Results</a></li>
                 <li><a href="#enter-results">Enter New Test Results</a></li>
             </ul>
         </nav>
 
-        <!-- View Results Section -->
-        <section id="view-results" class="dashboard-section">
-            <h2>View Exam Results</h2>
-            <table id="resultsTable" class="results-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Exam Date</th>
-                        <th>Exam Type</th>
-                        <th>Status</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic Content Inserted by JavaScript -->
-                </tbody>
-            </table>
-        </section>
-
-        <!-- Modify Results Section -->
-        <section id="modify-results" class="dashboard-section">
-            <h2>Modify Exam Results</h2>
-            <form id="modifyResultsForm">
-                <label for="patientName">Patient Name:</label>
-                <input type="text" id="patientName" name="patientName" required>
-                <label for="examType">Exam Type:</label>
-                <input type="text" id="examType" name="examType" required>
-                <label for="examResult">Exam Result:</label>
-                <input type="text" id="examResult" name="examResult" required>
-                <button type="submit">Update Result</button>
-            </form>
-        </section>
 
         <!-- Enter New Test Results Section -->
         <section id="enter-results" class="dashboard-section">
@@ -120,6 +84,21 @@
                 <button type="submit">Add Result</button>
             </form>
         </section>
+
+        <!-- Modify Results Section -->
+        <section id="modify-results" class="dashboard-section">
+            <h2>Modify Exam Results</h2>
+            <form id="modifyResultsForm">
+                <label for="patientName">Patient Name:</label>
+                <input type="text" id="patientName" name="patientName" required>
+                <label for="examType">Exam Type:</label>
+                <input type="text" id="examType" name="examType" required>
+                <label for="examResult">Exam Result:</label>
+                <input type="text" id="examResult" name="examResult" required>
+                <button type="submit">Update Result</button>
+            </form>
+        </section>
+
     </div>
     <script src="js/staffDashboard.js"></script>
 </body>
