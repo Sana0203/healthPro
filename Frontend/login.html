@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HealthPro - Register/Login</title>
     <link rel="stylesheet" href="css/styles.css">
-    <meta charset="utf-8">
-    <title>HealthPro</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
@@ -34,10 +29,11 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 </head>
+
 <body>
 
-     <!-- Spinner Start -->
-     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
             <span class="sr-only">Loading...</span>
         </div>
@@ -52,110 +48,107 @@
     </nav>
     <!-- Navbar End -->
 
-<!-- Login Start -->
-<div class="form-container-xl py-5" id="loginSection" style="display: block;">
-    <div class="container col-11 col-md-9 col-lg-7"> <!-- Adjusted classes -->
-        <div class="d-flex justify-content-center align-items-center full-height">
-            <div class="form-container col-11 col-md-9 col-lg-7"> <!-- Adjusted classes -->
-                <div class="wow fadeInUp" data-wow-delay="0.1s">
-                    <h1 class="mb-4 text-center">Login</h1>
+    <!-- Login Start -->
+    <div class="form-container-xl py-5" id="loginSection" style="display: block;">
+        <div class="container col-11 col-md-9 col-lg-7">
+            <div class="d-flex justify-content-center align-items-center full-height">
+                <div class="form-container col-11 col-md-9 col-lg-7">
+                    <div class="wow fadeInUp" data-wow-delay="0.1s">
+                        <h1 class="mb-4 text-center">Login</h1>
+                    </div>
+                    <div class="bg-light rounded shadow-sm p-4">
+                        <form id="loginForm" class="w-100">
+                            <div class="mb-3">
+                                <label for="userTypeSelectionLogin" class="form-label">User  Type:</label>
+                                <select required id="userTypeSelectionLogin" name="userType" class="form-select border-0" style="height: 55px;">
+                                    <option disabled selected value>Select user type</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="patient">Patient</option>
+                                    <option value="doctor">Doctor</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-lg-12">
+                                <label for="loginID" class="form-label">ID:</label>
+                                <input type="text" id="loginID" name="loginID" required class="form-control border-0" placeholder="Enter your ID" style="height: 55px;">
+                            </div>
+                            <div class="mb-3 col-lg-12">
+                                <label for="loginPassword" class="form-label">Password:</label>
+                                <input type="password" id="loginPassword" name="loginPassword" required class="form-control border-0" placeholder="Enter your password" style="height: 55px;">
+                            </div>
+                            <div class="mb-3 col-lg-12" id="registerPrompt" style="display: none;">
+                                <p>Not registered? <a href="#" id="registerLink">Register here</a></p>
+                            </div>
+                            <div class="mb-3 col-lg-12">
+                                <button type="submit" class="btn btn-primary w-100 py-3">Login</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="bg-light rounded shadow-sm p-4">
-                    <form id="loginForm" class="w-100">
-                        <div class="mb-3">
-                            <label for="userTypeSelection" class="form-label">User  Type:</label>
-                            <select required id="userTypeSelectionLogin" class="form-select border-0" style="height: 55px;">
-                                <option disabled selected value>Select user type</option>
-                                <option value="admin">Admin</option>
-                                <option value="staff">Staff</option>
-                                <option value="patient">Patient</option>
-                                <option value="doctor">Doctor</option>
-                            </select>
-                        </div>
-                        <div class="mb-3 col-lg-12">
-                            <label for="loginID" class="form-label">ID:</label> <!-- Changed from username to ID -->
-                            <input type="text" id="loginID" required class="form-control border-0" placeholder="Enter your  ID" style="height: 55px;"> <!-- Updated placeholder -->
-                        </div>
-                        <div class="mb-3 col-lg-12">
-                            <label for="loginPassword" class="form-label">Password:</label>
-                            <input type="password" id="loginPassword" required class="form-control border-0" placeholder="Enter your password" style="height: 55px;">
-                        </div>
-                        <div class="mb-3 col-lg-12" id="registerPrompt" style="display: none;">
-                            <p>Not registered? <a href="#" id="registerLink">Register here</a></p>
-                        </div>
-                        <div class="mb-3 col-lg-12">
-                            <button type="submit" class="btn btn-primary w-100 py-3">Login</button>
+            </div>
+        </div>
+    </div>
+    <!-- Login End -->
+ 
+    <!-- Register Start -->
+    <div class="form-container-xl py-5" id="registerSection" style="display: none;">
+        <div class="container">
+            <div class="col-lg-12 wow fadeInUp">
+                <h1 class="mb-4 text-center">Patient Registration</h1>
+            </div>
+            <div class="col-lg-12 d-inline-flex wow fadeInUp">
+                <div class="bg-light rounded h-100 d-flex p-5">
+                    <form id="registerForm" class="w-100">
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="registerHealthID" class="form-label">Health ID:</label>
+                                <input type="text" name="registerHealthID" id="registerHealthID" class="form-control border-0" placeholder="Enter your Health ID" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="registerName" class="form-label">Name:</label>
+                                <input type="text" name="registerName" id="registerName" class="form-control border-0" placeholder="Name" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="registerEmail" class="form-label">Email:</label>
+                                <input required type="email" name="registerEmail" id="registerEmail" class="form-control border-0" placeholder="Email" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="registerPhone" class="form-label">Phone number:</label>
+                                <input required type="text" name="registerPhone" id="registerPhone" class="form-control border-0" placeholder="Phone number" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="registerGender" class="form-label">Gender:</label>
+                                <select required name="registerGender" id="registerGender" class="form-select border-0" style="height: 55px;">
+                                    <option disabled selected value>Gender</option>
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="registerDateOfBirth" class="form-label">Date of birth:</label>
+                                <div class="date" id="date" data-target-input="nearest">
+                                    <input type="text" id="registerDateOfBirth" name="registerDateOfBirth" required class="form-control border-0 datetimepicker-input" placeholder="Date of birth" data-target="#date" data-toggle="datetimepicker" style="height: 55px;">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="registerPassword" class="form-label">Password:</label>
+                                <input type="password" id="registerPassword" name="registerPassword" required class="form-control border-0" placeholder="Enter your password" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="confirmRegisterPassword" class="form-label">Confirm Password:</label>
+                                <input type="password" id="confirmRegisterPassword" name="confirmRegisterPassword" required class="form-control border-0" placeholder="Confirm your password" style="height: 55px;">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 py-3">Register</button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Login End -->
- 
-<!-- Register Start -->
-<div class="form-container-xl py-5" id="registerSection" style="display: none;">
-    <div class="container">
-        <div class="col-lg-12 wow fadeInUp">
-            <h1 class="mb-4 text-center">Patient Registeration</h1>
-        </div>
-        <div class="col-lg-12 d-inline-flex wow fadeInUp" >
-            <div class="bg-light rounded h-100 d-flex p-5">
-                <form id="registerForm" class="w-100">
-                    <div class="row g-3">
-                        <div class="col-12 col-sm-6">
-                            <label for="loginHealthID" class="form-label">Health ID:</label>
-                            <input type="text" name="loginHealthID" id="profileName" class="form-control border-0" placeholder="Enter your Health ID" style="height: 55px;">
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="profileName" class="form-label">Name:</label>
-                            <input type="text" name="profileName" id="profileName" class="form-control border-0" placeholder="Name" style="height: 55px;">
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="profileEmail" class="form-label">Email:</label>
-                            <input required type="email" name="profileEmail" id="profileEmail" class="form-control border-0" placeholder="Email" style="height: 55px;">
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="profilePhone" class="form-label">Phone number:</label>
-                            <input required type="text" name="profilePhone" id="profilePhone" class="form-control border-0" placeholder="Phone number" style="height: 55px;">
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="profileGender" class="form-label">Gender:</label>
-                            <select required name="profileGender" id="profileGender" class="form-select border-0" style="height: 55px;">
-                                <option disabled selected value>Gender</option>
-                                <option value="female">Female</option>
-                                <option value="male">Male</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="profileDateOfBirth" class="form-label">Date of birth:</label>
-                            <div class="date" id="date" data-target-input="nearest">
-                                <input type="text" id="profileDateOfBirth" name="profileDateOfBirth" required
-                                    class="form-control border-0 datetimepicker-input"
-                                    placeholder="Date of birth" data-target="#date" data-toggle="datetimepicker" style="height: 55px;">
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="password" class="form-label">Password:</label>
-                            <input type="password" id="password" required class="form-control border-0" placeholder="Enter your password" style="height: 55px;">
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label for="confirmPassword" class="form-label">Confirm Password:</label>
-                            <input type="password" id="confirmPassword" required class="form-control border-0" placeholder="Confirm your password" style="height: 55px;">
-                        </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary w-100 py-3">Register</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Register End -->
-
+    <!-- Register End -->
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -173,15 +166,166 @@
     <script src="js/main.js"></script>
     <script src="js/script.js"></script>
     <script>
-        document.getElementById('userTypeSelectionLogin').addEventListener('change', function() {
-            const registerPrompt = document.getElementById('registerPrompt');
-            if (this.value === 'patient') {
-                registerPrompt.style.display = 'block';
-            } else {
-                registerPrompt.style.display = 'none';
+        // Sample data for patients, staff, doctors, and admin
+        const patients = [
+            {
+                healthID: 'patient1',
+                name: 'John Doe',
+                email: 'john@example.com',
+                phone: '123-456-7890',
+                gender: 'male',
+                dateOfBirth: '1990-01-01',
+                password: 'password1',
+                approved: true // Approved for login
+            },
+            {
+                healthID: 'patient2',
+                name: 'Jane Smith',
+                email: 'jane@example.com',
+                phone: '098-765-4321',
+                gender: 'female',
+                dateOfBirth: '1992-02-02',
+                password: 'password2',
+                approved: false // Not approved yet
+            }
+        ];
+
+        const staff = [
+            {
+                workID: 'staff1',
+                name: 'Alice Johnson',
+                email: 'alice@example.com',
+                phone: '555-1234',
+                password: 'staffpassword',
+                dateOfBirth: '1985-03-03',
+                image: 'path/to/image.jpg' // Example image path
+            }
+        ];
+
+        const doctors = [
+            {
+                workID: 'doctor1',
+                name: 'Dr. Michael Brown',
+                email: 'michael@example.com',
+                phone: '555-5678',
+                password: 'doctorpassword',
+                dateOfBirth: '1975-04-04',
+                image: 'path/to/image.jpg' // Example image path
+            }
+        ];
+
+        const admin = [
+            {
+                workID: 'admin1',
+                name: 'Admin User',
+                email: 'admin@example.com',
+                phone: '555-8765',
+                password: 'adminpassword',
+                dateOfBirth: '1980-05-05',
+                image: 'path/to/image.jpg' // Example image path
+            }
+        ];
+
+        // Handle Login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const userType = document.getElementById('userTypeSelectionLogin').value;
+            const loginID = document.getElementById('loginID').value;
+            const loginPassword = document.getElementById('loginPassword').value;
+
+            let user = null;
+
+            switch(userType) {
+                case 'patient':
+                    user = patients.find(p => p.healthID === loginID && p.password === loginPassword);
+                    if (user) {
+                        if (!user.approved) {
+                            alert('Your account is not approved yet. Please wait for admin approval.');
+                        } else {
+                            localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                            window.location.href = 'dashboard_user.html'; // Redirect to patient dashboard
+                        }
+                    } else {
+                        alert('Invalid Health ID or password. Please contact admin for assistance.');
+                    }
+                    break;
+
+                case 'staff':
+                    user = staff.find(s => s.workID === loginID && s.password === loginPassword);
+                    if (user) {
+                        localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                        window.location.href = 'dashboard_staff.html'; // Redirect to staff dashboard
+                    } else {
+                        alert('Invalid Work ID or password. Please contact admin for assistance.');
+                    }
+                    break;
+
+                case 'doctor':
+                    user = doctors.find(d => d.workID === loginID && d.password === loginPassword);
+                    if (user) {
+                        localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                        window.location.href = 'dashboard_doctor.html'; // Redirect to doctor dashboard
+                    } else {
+                        alert(' Invalid Work ID or password. Please contact admin for assistance.');
+                    }
+                    break;
+
+                case 'admin':
+                    user = admin.find(a => a.workID === loginID && a.password === loginPassword);
+                    if (user) {
+                        localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                        window.location.href = 'dashboard_admin.html'; // Redirect to admin dashboard
+                    } else {
+                        alert('Invalid Work ID or password. Please contact admin for assistance.');
+                    }
+                    break;
+
+                default:
+                    alert('Please select a user type.');
             }
         });
-    
+
+        // Handle Registration
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const healthID = document.getElementById('registerHealthID').value;
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const gender = document.getElementById('registerGender').value;
+            const dateOfBirth = document.getElementById('registerDateOfBirth').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmRegisterPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            // Create patient object and add to patients array
+            const newPatient = {
+                healthID,
+                name,
+                email,
+                phone,
+                gender,
+                dateOfBirth,
+                password,
+                approved: false // Default to false until approved by admin
+            };
+
+            patients.push(newPatient); // Simulate storing the new patient
+            alert('Registration successful! Please wait for admin approval.');
+
+            // Reset form and show login section
+            document.getElementById('registerForm').reset();
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('registerSection').style.display = 'none';
+        });
+
+        // Change the register link to correctly show the registration form
         document.getElementById('registerLink').addEventListener('click', function(event) {
             event.preventDefault();
             document.getElementById('loginSection').style.display = 'none';
