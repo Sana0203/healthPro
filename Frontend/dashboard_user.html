@@ -64,6 +64,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+
+        // Retrieve user data from local storage/get patient name
+        const userData = JSON.parse(localStorage.getItem('user'));
+
+        // Check if user data exists and set the welcome message
+        if (userData && userData.name) {
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userData.name}`;
+        } else {
+            document.getElementById('welcomeMessage').textContent = 'Welcome, Guest';
+        }
+
         // Sample exam results data
         const examResults = [
             { result: 'Normal', resultID: 1, rangemax: 100, rangemin: 80, resultdate: '2023-01-15', abnormality: 'No', TestID: 101, TestName: 'Blood Pressure' },
