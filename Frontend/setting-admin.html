@@ -82,7 +82,6 @@
         </div>
     </nav>
     <!-- Navbar End -->
-
 <!-- Setting Start -->
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -91,12 +90,12 @@
             <h1 class="mb-4">Administrator Setting</h1>
             
             <!-- Change Profile Image Form -->
-            <div class="bg-light rounded  d-flex p-5 mb-4">
+            <div class="bg-light rounded d-flex p-5 mb-4">
                 <form id="settingProfileImageForm" enctype="multipart/form-data" class="w-100">
                     <h5>Change Profile Image</h5>
                     <div class="col-12">
                         <div class="profile-image text-center" id="profileImageContainer">
-                            <img src="img/userImage.png" alt="Profile Image" class="rounded-circle pb-1" width="100" height="100" id="profileImagePreview">
+                            <img src="img/img.jpg" alt="Profile Image" class="rounded-circle pb-1" width="100" height="100" id="profileImagePreview">
                         </div>
                         <input type="file" name="profileImage" id="profileImage" class="form-control border-0" style="height: 55px; display: none;" accept="image/*">
                     </div>
@@ -110,7 +109,7 @@
             </div>
 
             <!-- Change Password Form -->
-            <div class="bg-light rounded  d-flex p-5">
+            <div class="bg-light rounded d-flex p-5">
                 <form id="settingPassChangeForm" class="w-100">
                     <h5>Change Password</h5>
                     <div class="col-12 mb-3">
@@ -135,32 +134,88 @@
 </div>
 <!-- Setting End -->
 
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/wow/wow.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/counterup/counterup.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="lib/tempusdominus/js/moment.min.js"></script>
+<script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+
+<script>
+    // Change Password and Image Form Submission
+    // Change Password Form Submission
+    const settingPassChangeForm = document.getElementById('settingPassChangeForm');
+    if (settingPassChangeForm) {
+        settingPassChangeForm.addEventListener('submit', (e) => {
+            // Define the variables for the form
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const passwordError = document.getElementById("passwordError");
+            const passwordErrorMessage = document.getElementById("passwordErrorMessage");
+
+            // Prevent page from reloading
+            e.preventDefault();
+
+            let errorMessage = [];
+
+            // Validate Old Password
+            const storedPassword = JSON.parse(localStorage.getItem('user'));
+            if (oldPassword === '') {
+                errorMessage.push("Old password is required");
+            } else if (oldPassword !== storedPassword.password) {
+                errorMessage.push("Old password does not match");
+            }
+
+            // Validate New Password
+            if (newPassword === '') {
+                errorMessage.push("New password is required");
+            } else if (newPassword.length < 6) {
+                errorMessage.push("New password must be at least 6 characters long");
+            }
+
+            // Validate Confirm Password
+            if (confirmPassword === '') {
+                errorMessage.push("Confirm password is required");
+            } else if (newPassword !== confirmPassword) {
+                errorMessage.push("New password and confirm password do not match");
+            }
+
+            // Show error messages if any
+            if (errorMessage.length > 0) {
+                passwordError.style.display = "block";
+                passwordErrorMessage.innerText = errorMessage.join(", ");
+            } else {
+                // Proceed with form submission or further processing
+                passwordError.style.display = "none";
+
+                // Update password in local storage
+                storedPassword.password = newPassword;
+                console.log(storedPassword);
+                // Update local storage
+                localStorage.setItem('user', JSON.stringify(storedPassword));
+
+
+                // Show success alert
+                alert('Password changed successfully!');
+
+                // Reset the form
+                settingPassChangeForm.reset();
+            }
+        });
+    }
+</script>
 </body>
-
-
-
-
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
-
-
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
-
-
 </html>
-
-    
-</body>

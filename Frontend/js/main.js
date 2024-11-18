@@ -97,195 +97,70 @@
 })(jQuery);
 
 
-document.addEventListener('DOMContentLoaded', function () {
 
-    //Edit user's profile S.M
-    const profileUserInfo = document.getElementById('profileUserInfo');
-    if (profileUserInfo) {
-        profileUserInfo.addEventListener('submit', (e) => {
-            // Define variables for profile form
-            const profileName = document.getElementById('profileName').value;
-            const profileEmail = document.getElementById('profileEmail').value;
-            const profilePhone = document.getElementById('profilePhone').value;
-            const profileGender = document.getElementById('profileGender').value;
-            const profileDateOfBirth = document.getElementById('profileDateOfBirth').value;
-            const profileError = document.getElementById("profileError");
-            const profileErrorMessage = document.getElementById("profileErrorMessage");
-
-            e.preventDefault();
-            let errorMessage = [];
-
-            // Validate Name
-            if (!/^[a-zA-Z\s]+$/.test(profileName)) {
-                errorMessage.push("Name must contain only letters");
-            }
-
-            // Validate Email
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(profileEmail)) {
-                errorMessage.push("Please enter a valid email address");
-            }
-
-            // Validate Phone
-            const phonePattern = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/; 
-            if (!phonePattern.test(profilePhone)) {
-                errorMessage.push("Phone number must be 10 digits long and contain only numbers");
-            }
-
-            // Validate Gender
-            if (profileGender === '') {
-                errorMessage.push("Gender selection is required");
-            }
-
-            // Validate Date of Birth
-            if (!Date.parse(profileDateOfBirth)) {
-                errorMessage.push("Please enter a valid date of birth");
-            }
-
-            // Show error messages if any
-            if (errorMessage.length > 0) {
-                profileError.style.display = "block";
-                profileErrorMessage.innerText = errorMessage.join(", ");
-            } else {
-                // Proceed with form submission or further processing
-                profileError.style.display = "none";
-                // Add your form submission logic here
-            }
-        });
-    }   
-
-    // Change Password and Image Form Submission S.M
-    // Change Password Form Submission
-    const settingPassChangeForm = document.getElementById('settingPassChangeForm');
-    if (settingPassChangeForm) {
-        settingPassChangeForm.addEventListener('submit', (e) => {
-        
-            console.log("change");
+//         // Change Profile Image Form Submission S.M
+//         const settingProfileImageForm = document.getElementById('settingProfileImageForm');
+//         const profileImageInput = document.getElementById('profileImage');
+//         const profileImagePreview = document.getElementById('profileImagePreview');
+//         const profileImageContainer = document.getElementById('profileImageContainer');
+//         const imageError = document.getElementById("imageError");
+//         const imageErrorMessage = document.getElementById("imageErrorMessage");
     
-            //define  the valuables for the form
-            const oldPassword = document.getElementById('oldPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const passwordError = document.getElementById("passwordError");
-            const passwordErrorMessage = document.getElementById("passwordErrorMessage");
+//         // Make the image clickable to open the file input
+//         profileImageContainer.addEventListener('click', function () {
+//             profileImageInput.click();
+//         });
     
-            //prevent page from reloading
-            e.preventDefault();
+//         // Handle the file input change event
+//         profileImageInput.addEventListener('change', function (e) {
+//             e.preventDefault();
+//             const file = e.target.files[0];
     
-            let errorMessage = [];
-    
-            // Validate Old Password
-            if (oldPassword === '') {
-                errorMessage.push("Old password is required");
-            }
-    
-            // Validate New Password
-            if (newPassword === '') {
-                errorMessage.push("New password is required");
-            } else if (newPassword.length < 6) {
-                errorMessage.push("New password must be at least 6 characters long");
-            }
-    
-            // Validate Confirm Password
-            if (confirmPassword === '') {
-                errorMessage.push("Confirm password is required");
-            } else if (newPassword !== confirmPassword) {
-                errorMessage.push("New password and confirm password do not match");
-            }
-    
-            // Show error messages if any
-            if (errorMessage.length > 0) {
-                passwordError.style.display = "block";
-                passwordErrorMessage.innerText = errorMessage.join(", ");
-            } else {
-                // Proceed with form submission or further processing
-                passwordError.style.display = "none";
-    
-                // // AJAX Request to Change Password
-                // $.ajax({
-                //     type: 'POST',
-                //     url: 'change-password.php', // Replace with your server-side script
-                //     data: { oldPassword: oldPassword, newPassword: newPassword },
-                //     success: function(response) {
-                //         if (response === 'success') {
-                //             alert('Password changed successfully!');
-                //             settingForm.reset(); // Reset the form
-                //         } else {
-                //             passwordError.style.display = "block";
-                //             passwordErrorMessage.innerText = 'Failed to change password!';
-                //         }
-                //     },
-                //     error: function() {
-                //         passwordError.style.display = "block";
-                //         passwordErrorMessage.innerText = 'An error occurred while changing the password!';
-                //     }
-                // });
-            }
-        });
-    }
-        // Change Profile Image Form Submission S.M
-        const settingProfileImageForm = document.getElementById('settingProfileImageForm');
-        const profileImageInput = document.getElementById('profileImage');
-        const profileImagePreview = document.getElementById('profileImagePreview');
-        const profileImageContainer = document.getElementById('profileImageContainer');
-        const imageError = document.getElementById("imageError");
-        const imageErrorMessage = document.getElementById("imageErrorMessage");
-    
-        // Make the image clickable to open the file input
-        profileImageContainer.addEventListener('click', function () {
-            profileImageInput.click();
-        });
-    
-        // Handle the file input change event
-        profileImageInput.addEventListener('change', function (e) {
-            e.preventDefault();
-            const file = e.target.files[0];
-    
-            // Check if the selected file is an image
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    // Set the new image source
-                    profileImagePreview.src = event.target.result;
-                    imageError.style.display = "none"; // Hide error if valid image
-                };
-                reader.readAsDataURL(file);
-            } else {
-                // Show error if the file is not an image
-                imageError.style.display = "block";
-                imageErrorMessage.innerText = "Please select a valid image file!";
-                profileImagePreview.src = "img/userImage.png"; // Reset to default image
-            }
-        });
+//             // Check if the selected file is an image
+//             if (file && file.type.startsWith('image/')) {
+//                 const reader = new FileReader();
+//                 reader.onload = function (event) {
+//                     // Set the new image source
+//                     profileImagePreview.src = event.target.result;
+//                     imageError.style.display = "none"; // Hide error if valid image
+//                 };
+//                 reader.readAsDataURL(file);
+//             } else {
+//                 // Show error if the file is not an image
+//                 imageError.style.display = "block";
+//                 imageErrorMessage.innerText = "Please select a valid image file!";
+//                 profileImagePreview.src = "img/userImage.png"; // Reset to default image
+//             }
+//         });
 
-        // Handle image form submission S.M
-        settingProfileImageForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent default form submission
+//         // Handle image form submission S.M
+//         settingProfileImageForm.addEventListener('submit', function (e) {
+//             e.preventDefault(); // Prevent default form submission
 
-            const file = profileImageInput.files[0];
+//             const file = profileImageInput.files[0];
 
-            // Check if the file is selected and is an image
-            if (!file) {
-                imageError.style.display = "block";
-                imageErrorMessage.innerText = "No file selected!";
-                return;
-            }
+//             // Check if the file is selected and is an image
+//             if (!file) {
+//                 imageError.style.display = "block";
+//                 imageErrorMessage.innerText = "No file selected!";
+//                 return;
+//             }
 
-            if (!file.type.startsWith('image/')) {
-                imageError.style.display = "block";
-                imageErrorMessage.innerText = "Please select a valid image file!";
-                return;
-            }
+//             if (!file.type.startsWith('image/')) {
+//                 imageError.style.display = "block";
+//                 imageErrorMessage.innerText = "Please select a valid image file!";
+//                 return;
+//             }
 
-            // If valid, proceed with form submission (e.g., AJAX request)
-            imageError.style.display = "none"; // Hide error
-            // Here you can add your AJAX request to submit the form data
-            console.log("Form submitted with image:", file);
-            // Example: submit the form data using FormData
-            const formData = new FormData(settingProfileImageForm);
-            // Send formData using fetch or XMLHttpRequest
-        });
-});
+//             // If valid, proceed with form submission (e.g., AJAX request)
+//             imageError.style.display = "none"; // Hide error
+//             // Here you can add your AJAX request to submit the form data
+//             console.log("Form submitted with image:", file);
+//             // Example: submit the form data using FormData
+//             const formData = new FormData(settingProfileImageForm);
+//             // Send formData using fetch or XMLHttpRequest
+//         });
+// });
 
 
 (function ($) {
