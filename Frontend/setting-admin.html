@@ -95,15 +95,15 @@
                     <h5>Change Profile Image</h5>
                     <div class="col-12">
                         <div class="profile-image text-center" id="profileImageContainer">
-                            <img src="img/img.jpg" alt="Profile Image" class="rounded-circle pb-1" width="100" height="100" id="profileImagePreview">
+                            <input type="file" name="profileImage" id="profileImage" class="form-control border-0" style="display: none;" accept="image/*">
+                            <img src="img/img.jpg" alt="Profile Image" class="rounded-circle pb-1" width="100" height="100" id="profileImagePreview" style="cursor: pointer;">
                         </div>
-                        <input type="file" name="profileImage" id="profileImage" class="form-control border-0" style="height: 55px; display: none;" accept="image/*">
                     </div>
                     <div class="col-12" style="display: none;" id="imageError">
                         <p class="text-danger" id="imageErrorMessage">Please complete the form with valid inputs!</p>
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-primary w-100 py-3" type="submit">Change Profile Image</button>
+                        <button class="btn btn-primary w-100 py-3" type="submit">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -216,6 +216,45 @@
             }
         });
     }
+    document.addEventListener('DOMContentLoaded', () => {
+        const profileImageInput = document.getElementById('profileImage');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        
+        // Load the existing image from local storage if available
+        const storedUser  = JSON.parse(localStorage.getItem('user'));
+        if (storedUser  && storedUser.image) {
+            profileImagePreview.src = storedUser.image;
+        }
+
+        // Make the profile image clickable to trigger the file input
+        profileImagePreview.addEventListener('click', () => {
+            profileImageInput.click();
+        });
+
+        // Handle the file selection
+        profileImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    // Display the image in the preview
+                    profileImagePreview.src = event.target.result;
+
+                    // Update the user object in local storage
+                    storedUser .image = event.target.result;
+                    localStorage.setItem('user', JSON.stringify(storedUser ));
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle form submission to save changes (if needed)
+        const settingProfileImageForm = document.getElementById('settingProfileImageForm');
+        settingProfileImageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Profile image updated successfully!');
+        });
+    });
 </script>
 </body>
 </html>

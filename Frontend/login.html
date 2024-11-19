@@ -244,7 +244,7 @@
                         if (!user.approved) {
                             alert('Your account is not approved yet. Please wait for admin approval.');
                         } else {
-                            localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                            localStorage.setItem('user', JSON.stringify(user));
                             window.location.href = 'dashboard_user.html'; // Redirect to patient dashboard
                         }
                     } else {
@@ -255,7 +255,7 @@
                 case 'staff':
                     user = staff.find(s => s.workID === loginID && s.password === loginPassword);
                     if (user) {
-                        localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                        localStorage.setItem('user', JSON.stringify(user));
                         window.location.href = 'dashboard_staff.html'; // Redirect to staff dashboard
                     } else {
                         alert('Invalid Work ID or password. Please contact admin for assistance.');
@@ -265,7 +265,7 @@
                 case 'doctor':
                     user = doctors.find(d => d.workID === loginID && d.password === loginPassword);
                     if (user) {
-                        localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                        localStorage.setItem('user', JSON.stringify(user));
                         window.location.href = 'dashboard_doctor.html'; // Redirect to doctor dashboard
                     } else {
                         alert(' Invalid Work ID or password. Please contact admin for assistance.');
@@ -275,7 +275,7 @@
                 case 'admin':
                     user = admin.find(a => a.workID === loginID && a.password === loginPassword);
                     if (user) {
-                        localStorage.setItem('user', JSON.stringify({ ...user, userType }));
+                        localStorage.setItem('user', JSON.stringify(user));
                         window.location.href = 'dashboard_admin.html'; // Redirect to admin dashboard
                     } else {
                         alert('Invalid Work ID or password. Please contact admin for assistance.');
@@ -331,6 +331,18 @@
             event.preventDefault();
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('registerSection').style.display = 'block';
+        });
+        // Add this function to handle user type selection change
+        document.getElementById('userTypeSelectionLogin').addEventListener('change', function() {
+            const userType = this.value;
+            const registerPrompt = document.getElementById('registerPrompt');
+
+            // Show the register prompt only if the selected user type is 'patient'
+            if (userType === 'patient') {
+                registerPrompt.style.display = 'block';
+            } else {
+                registerPrompt.style.display = 'none';
+            }
         });
     </script>
 </body>
