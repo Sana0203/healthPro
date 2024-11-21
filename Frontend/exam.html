@@ -74,21 +74,22 @@
     </nav>
     <!-- Navbar End -->
 
-    <!-- Prescription Workflow Start -->
+    <!-- Exam Workflow Start -->
     <div class="container-xl py-5">
         <div class="container">
             <div class="row g-5">
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <p class="d-inline-block border rounded-pill py-1 px-4">Prescription</p>
+                    <p class="d-inline-block border rounded-pill py-1 px-4">Exam</p>
                     <h1 class="mb-4">Doctor 's Prescription Workflow</h1>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#prescriptionModal">Add Prescription</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ExamModal">Add Prescription</button>
                 </div>
                 <!-- Table to display submitted prescriptions -->
-                <table class="table table-bordered mt-4" id="prescriptionTable">
+                <table class="table table-bordered mt-4" id="ExamTable">
                     <thead>
                         <tr >
                             <th>Health ID</th>
                             <th>Doctor ID</th>
+                            <th>Date</th>
                             <th>Prescribed Tests</th>
                         </tr>
                     </thead>
@@ -101,18 +102,18 @@
     <!-- Prescription Workflow End -->
 
     <!-- Prescription Modal -->
-    <div class="modal fade" id="prescriptionModal" tabindex="-1" role="dialog" aria-labelledby="prescriptionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="ExamModal" tabindex="-1" role="dialog" aria-labelledby="ExamModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="prescriptionModalLabel">Add Prescription</h5>
+                <h5 class="modal-title" id="ExamModalLabel">Add Prescription</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             
             </div>
             <div class="modal-body">
-                <form id="prescriptionForm">
+                <form id="ExamForm">
                     <div class="mb-3">
                         <label for="healthId" class="form-label">Health ID</label>
                         <div class="input-group">
@@ -129,36 +130,40 @@
                         <input required disabled type="text" id="profileWorkID" class="form-control border-0" placeholder="ID" style="height: 55px;" readonly />
                     </div>
                     <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" id="examDate" name="examDate" class="form-control" style="height: 55px;" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="prescribedTests" class="form-label">Prescribed Tests</label><br>
                         <label>Blood Test <br>
                             <table>
                                 <tr>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Routine Hematology"> Routine Hematology</td>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Coagulation"> Coagulation</td>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Routine Chemistry"> Routine Chemistry</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Routine Hematology"> Routine Hematology</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Coagulation"> Coagulation</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Routine Chemistry"> Routine Chemistry</td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Renal Function"> Renal Function</td>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Liver Function"> Liver Function</td>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Pancreas Function"> Pancreas Function</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Renal Function"> Renal Function</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Liver Function"> Liver Function</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Pancreas Function"> Pancreas Function</td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Endocrinology"> Endocrinology</td>
-                                    <td><input type="checkbox" name="test${testPrescriptionCount}" value="Tumor Markers"> Tumor Markers</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Endocrinology"> Endocrinology</td>
+                                    <td><input type="checkbox" name="test${testExamCount}" value="Tumor Markers"> Tumor Markers</td>
                                 </tr>
                             </table>
                         </label><br>
-                        <label><input type="checkbox" name="test${testPrescriptionCount}" value="Urine Test"> Urine Test</label><br>
-                        <label><input type="checkbox" name="test${testPrescriptionCount}" value="Ultrasound"> Ultrasound</label><br>
-                        <label><input type="checkbox" name="test${testPrescriptionCount}" value="X-Ray"> X-Ray</label><br>
-                        <label><input type="checkbox" name="test${testPrescriptionCount}" value="CT Scan"> CT Scan</label><br>
-                        <label><input type="checkbox" name="test${testPrescriptionCount}" value="ECG"> ECG</label><br>
+                        <label><input type="checkbox" name="test${testExamCount}" value="Urine Test"> Urine Test</label><br>
+                        <label><input type="checkbox" name="test${testExamCount}" value="Ultrasound"> Ultrasound</label><br>
+                        <label><input type="checkbox" name="test${testExamCount}" value="X-Ray"> X-Ray</label><br>
+                        <label><input type="checkbox" name="test${testExamCount}" value="CT Scan"> CT Scan</label><br>
+                        <label><input type="checkbox" name="test${testExamCount}" value="ECG"> ECG</label><br>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="savePrescription">Save Prescription</button>
+                <button type="button" class="btn btn-primary" id="saveExam">Save Prescription</button>
             </div>
         </div>
         </div>
