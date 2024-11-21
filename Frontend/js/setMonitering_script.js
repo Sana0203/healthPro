@@ -57,7 +57,6 @@ document.getElementById('monitoringForm').addEventListener('submit', function(ev
     const healthId = document.getElementById('healthId').value;
     const patientName = document.getElementById('patientName').value;
     const monitoringType = document.getElementById('monitoringType').value;
-    const monitoringFrequency = document.getElementById('monitoringFrequency').value;
 
     // Create a new row for the table
     const newRow = document.createElement('tr');
@@ -65,7 +64,11 @@ document.getElementById('monitoringForm').addEventListener('submit', function(ev
         <td>${healthId}</td>
         <td>${patientName}</td>
         <td>${monitoringType}</td>
-        <td>${monitoringFrequency}</td>
+        <td>
+        <button class="btn btn-outline-danger" onclick="modifyRow(this)">Modify</button>
+        
+        <button class="btn btn-outline-danger" onclick="deleteRow(this)">Delete</button>
+        </td>
     `;
 
     // Append the new row to the MonitoringTable
@@ -74,3 +77,75 @@ document.getElementById('monitoringForm').addEventListener('submit', function(ev
     // Optionally, clear the form fields after submission
     document.getElementById('monitoringForm').reset();
 });
+
+// Function to delete a row
+function deleteRow(button) {
+    // Get the row that contains the button
+    const row = button.closest('tr');
+    
+    // Remove the row from the table
+    row.remove();
+}
+
+// Function to modify a row
+function modifyRow(button) {
+    // Get the row that contains the button
+    const row = button.closest('tr');
+    
+    // Get the current value of the Monitoring Type
+    const monitoringTypeCell = row.cells[2];
+    const currentMonitoringType = monitoringTypeCell.textContent.trim();
+
+    // Create a select element for modifying the Monitoring Type
+    const select = document.createElement('select');
+    select.className = 'form-control'; // Add Bootstrap class for styling
+    select.required = true;
+
+    // Array of options for the select dropdown
+    const options = [
+        "Routine Hematology",
+        "Coagulation",
+        "Routine Chemistry",
+        "Renal Function",
+        "Liver Function",
+        "Pancreas Function",
+        "Endocrinolog",
+        "Tumor Markers"
+    ];
+
+    // Create options and append to the select
+    options.forEach(optionValue => {
+        const option = document.createElement('option');
+        option.value = optionValue;
+        option.textContent = optionValue;
+        if (optionValue === currentMonitoringType) {
+            option.selected = true; // Select the current value
+        }
+        select.appendChild(option);
+    });
+
+    // Replace the cell content with the select
+    monitoringTypeCell.innerHTML = ''; // Clear the cell
+    monitoringTypeCell.appendChild(select); // Add the select
+
+    // Change the Modify button to a Save button
+    button.textContent = 'Save';
+    button.setAttribute('onclick', 'saveRow(this)'); // Change the onclick to saveRow
+}
+
+// Function to save the modified row
+function saveRow(button) {
+    // Get the row that contains the button
+    const row = button.closest('tr');
+    
+    // Get the selected value from the Monitoring Type select
+    const monitoringTypeCell = row.cells[2];
+    const select = monitoringTypeCell.querySelector('select');
+
+    // Update the cell with the new value
+    monitoringTypeCell.textContent = select.value;
+
+    // Change the Save button back to a Modify button
+    button.textContent = 'Modify';
+    button.setAttribute('onclick', 'modifyRow(this)'); // Change the onclick back to modifyRow
+}

@@ -1,44 +1,83 @@
-const savedPrescriptions = [
+const savedExams = [
     {
         healthId: "H123",
         doctorId: "D456",
+        date: "2024-11-18",
         tests: ["Routine Hematology", "Renal Function"]
     },
     {
         healthId: "H789",
         doctorId: "D012",
+        date: "2024-11-18",
         tests: ["Liver Function", "Tumor Markers"]
     },
     {
         healthId: "H345",
         doctorId: "D678",
+        date: "2024-11-18",
         tests: ["Coagulation", "Routine Chemistry"]
     }
-]; // Array to hold saved prescriptions
+];
 
-// Function to populate the table with saved prescriptions
-function populatePrescriptionTable() {
-    const tableBody = document.querySelector('#prescriptionTable tbody');
-    savedPrescriptions.forEach(prescription => {
-        const newRow = tableBody.insertRow();
+// Function to get the current date in YYYY-MM-DD format
+function getCurrentDate() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+}
 
-        // Insert cells into the new row
-        const healthIdCell = newRow.insertCell(0);
-        const doctorIdCell = newRow.insertCell(1);
-        const prescribedTestsCell = newRow.insertCell(2);
+// Function to populate the table with saved Exams
+// Function to populate the table with data from backend
+function populateExamTable() {
+    const tableBody = document.querySelector('#ExamTable tbody');
+    tableBody.innerHTML = ''; // Clear the table before populating
 
-        // Set the cell values
-        healthIdCell.textContent = prescription.healthId;
-        doctorIdCell.textContent = prescription.doctorId;
-        prescribedTestsCell.textContent = prescription.tests.join(', ');
+    // Fetch data from the backend API
+    fetch('https://healthpro1-d5axdaa7g9asfvfx.canadacentral-01.azurewebsites.net')
+        .then(response => response.json())
+        .then(data => {
+            // Loop through the data and add rows to the table
+            data.forEach(exam => {
+                const newRow = tableBody.insertRow();
+
+                // Insert cells into the new row
+                const healthIdCell = newRow.insertCell(0);
+                const doctorIdCell = newRow.insertCell(1);
+                const dateCell = newRow.insertCell(2);
+                const prescribedTestsCell = newRow.insertCell(3);
+
+                // Set the cell values
+                healthIdCell.textContent = exam.healthId;
+                doctorIdCell.textContent = exam.doctorId;
+                dateCell.textContent = exam.date;
+                prescribedTestsCell.textContent = exam.tests.join(', ');
+            });
+        })
+        .catch(error => {
+            console.error('Failed to fetch data from backend:', error);
+            alert('Failed to fetch data from the backend.');
+        });
+        console.log('Fetching data from backend...');
+fetch('https://healthpro1-d5axdaa7g9asfvfx.canadacentral-01.azurewebsites.net')
+    .then(response => {
+        console.log('Response received:', response);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Data received:', data);
+        // Your code to handle the data...
+    })
+    .catch(error => {
+        console.error('Failed to fetch data from backend:', error);
+        alert('Failed to fetch data from the backend.');
     });
 }
 
-// Call the function to populate the table when the page loads
-populatePrescriptionTable();
 
-// Event listener for the save prescription button
-document.getElementById('savePrescription').addEventListener('click', function() {
+// Call the function to populate the table when the page loads
+populateExamTable();
+
+// Event listener for the save Exam button
+document.getElementById('saveExam').addEventListener('click', function() {
     // Get the values from the input fields
     const healthId = document.getElementById('healthId').value;
     const doctorId = document.getElementById('profileWorkID').value; // Doctor ID
@@ -51,55 +90,72 @@ document.getElementById('savePrescription').addEventListener('click', function()
     });
 
     // Validation: Check if Health ID, Doctor ID are filled and at least one test is selected
-    if (!healthId) {
+    if (!healthId || healthId.trim() === "") {
         alert('Please enter Health ID.');
-        return; // Exit the function
+        return;
     }
-    if (!doctorId) {
+    if (!doctorId || doctorId.trim() === "") {
         alert('Please enter Doctor ID.');
-        return; // Exit the function
+        return;
     }
     if (tests.length === 0) {
         alert('Please select at least one prescribed test.');
-        return; // Exit the function
+        return;
     }
 
-    // Create a new prescription object
-    const newPrescription = {
+    // Create a new Exam object with the current date
+    const newExam = {
         healthId: healthId,
         doctorId: doctorId,
+        date: getCurrentDate(),
         tests: tests
     };
 
-    // Add the new prescription to the savedPrescriptions array
-    savedPrescriptions.push(newPrescription);
+    // Add the new Exam to the savedExams array
+    savedExams.push(newExam);
 
-    // Populate the table again to include the new prescription
-    const tableBody = document.querySelector('#prescriptionTable tbody');
-    const newRow = tableBody.insertRow();
-
-    // Insert cells into the new row
-    const healthIdCell = newRow.insertCell(0);
-    const doctorIdCell = newRow.insertCell(1);
-    const prescribedTestsCell = newRow.insertCell(2);
-
-    // Set the cell values
-    healthIdCell.textContent = newPrescription.healthId;
-    doctorIdCell.textContent = newPrescription.doctorId;
-    prescribedTestsCell.textContent = newPrescription.tests.join(', ');
+    // Repopulate the table to include the new Exam
+    populateExamTable();
 
     // Clear the input fields and checkboxes after saving
-    document.getElementById('prescriptionForm').reset();
+    document.getElementById('ExamForm').reset();
 
     // Close the modal
-    $('#prescriptionModal').modal('hide');
+    $('#ExamModal').modal('hide');
 
     // Optionally trigger the click event of the close button
     document.querySelector('.btn-secondary[data-dismiss="modal"]').click();
 
     // Reload the page
     location.reload(); // This will refresh the page
+
+    // Send the new Exam to the backend
+    sendExamToBackend(newExam);
 });
+
+// Function to send data to the backend using a POST request
+function sendExamToBackend(Exam) {
+    fetch('https://healthpro1-d5axdaa7g9asfvfx.canadacentral-01.azurewebsites.net', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Exam)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to save Exam to backend.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Exam successfully sent to backend:', data);
+    })
+    .catch(error => {
+        console.error('Error sending Exam to backend:', error);
+        alert('Failed to save Exam to the server. Please try again later.');
+    });
+}
 
 // Patients data (Example patients for search functionality)
 const patients = [
