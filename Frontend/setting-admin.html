@@ -241,7 +241,7 @@
                     profileImagePreview.src = event.target.result;
 
                     // Update the user object in local storage
-                    storedUser .image = event.target.result;
+                    storedUser.image = event.target.result;
                     localStorage.setItem('user', JSON.stringify(storedUser ));
                 };
                 reader.readAsDataURL(file);

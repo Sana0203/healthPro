@@ -85,7 +85,7 @@
                     <th>Date of Birth</th>
                     <th>Email</th>
                     <th>Phone Number</th>
-                    <th>Gender</th>
+                    <!-- <th>Gender</th> -->
                     <th>Action</th>
                 </tr>
             </thead>
@@ -97,54 +97,48 @@
     </div>
 
     <script>
-        const patients = [
-            { HealthID: 1, name: "John Doe", dateOfBirth: "1990-01-01", email: "john@example.com", phonenumber: "123-456-7890", gender: "Male", password: "password123", approved: false },
-            { HealthID: 2, name: "Jane Smith", dateOfBirth: "1985-05-15", email: "jane@example.com", phonenumber: "234-567-8901", gender: "Female", password: "password123", approved: false },
-            { HealthID: 3, name: "Alice Johnson", dateOfBirth: "1992-03-20", email: "alice@example.com", phonenumber: "345-678-9012", gender: "Female", password: "password123", approved: false },
-            { HealthID: 4, name: "Bob Brown", dateOfBirth: "1988-07-30", email: "bob@example.com", phonenumber: "456-789-0123", gender: "Male", password: "password123", approved: false },
-            { HealthID: 5, name: "Charlie Davis", dateOfBirth: "1995-11-11", email: "charlie@example.com", phonenumber: "567-890-1234", gender: "Male", password: "password123", approved: false },
-            { HealthID: 6, name: "Diana Prince", dateOfBirth: "1991-02-28", email: "diana@example.com", phonenumber: "678-901-2345", gender: "Female", password: "password123", approved: false },
-            { HealthID: 7, name: "Ethan Hunt", dateOfBirth: "1980-12-12", email: "ethan@example.com", phonenumber: "789-012-3456", gender: "Male", password: "password123", approved: false },
-            { HealthID: 8, name: "Fiona Green", dateOfBirth: "1993-04-04", email: "fiona@example.com", phonenumber: "890-123-4567", gender: "Female", password: "password123", approved: false },
-            { HealthID: 9, name: "George White", dateOfBirth: "1987-09-09", email: "george@example.com", phonenumber: "901-234-5678", gender: "Male", password: "password123", approved: false },
-            { HealthID: 10, name: "Hannah Blue", dateOfBirth: "1994-06-06", email: "hannah@example.com", phonenumber: "012-345-6789", gender: "Female", password: "password123", approved: false }
-        ];
-
-        function loadPatients() {
+        async function loadPatients() {
+            const response = await fetch("http://localhost:5501/api/get_unapproved");
+            const patients = await response.json();
             const tableBody = document.querySelector("#patientsTable");
             tableBody.innerHTML = ""; // Clear existing rows
+
             patients.forEach(patient => {
-                if (!patient.approved) {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${patient.HealthID}</td>
-                        <td>${patient.name}</td>
-                        <td>${patient.dateOfBirth}</td>
-                        <td>${patient.email}</td>
-                        <td>${patient.phonenumber}</td>
-                        <td>${patient.gender}</td>
-                        <td><button class="btn btn-success" onclick="approvePatient(${patient.HealthID})">Approve</button></td>
-                    `;
-                    tableBody.appendChild(row);
-                }
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${patient.HealthID}</td>
+                    <td>${patient.Name}</td>
+                    <td>${new Date(patient.DateOfBirth).toLocaleDateString()}</td>
+                    <td>${patient.Email}</td>
+                    <td>${patient.PhoneNumber}</td>
+                    <td><button class="btn btn-success" onclick="approvePatient('${patient.HealthID}')">Approve</button></td>
+                `;
+                tableBody.appendChild(row);
             });
         }
 
-        function approvePatient(healthID) {
-            const patient = patients.find(p => p.HealthID === healthID);
-            if (patient) {
-                patient.approved = true; // Change approved attribute to true
-                loadPatients(); // Refresh the table
+        async function approvePatient(healthID) {
+
+            const response = await fetch("http://localhost:5501/api/approve_patient", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ healthID })
+            });
+
+            if (response.ok) {
+                loadPatients(); // Refresh the table after approval
+            } else {
+                console.error("Failed to approve patient");
             }
         }
 
         // Load patients when the page is loaded
         window.onload = loadPatients;
     </script>
-</body>
-</html>
-    </div>
 
-    <script ></script>
+    
 </body>
 </html>
+
