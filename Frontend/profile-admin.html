@@ -225,13 +225,13 @@
                         // Get updated values
                         const updatedUserInfo = {
                             workID: userInfo.workID, // Keep ID unchanged
+                            password: userInfo.password,
                             name: profileName,
                             email: profileEmail,
                             phone: profilePhone,
                             gender: profileGender,
                             dateOfBirth: profileDateOfBirth,
                             image: userInfo.image, // Assuming image is not changed
-                            userType: userInfo.userType // Assuming userType is not changed
                         };
 
                         // Update local storage
