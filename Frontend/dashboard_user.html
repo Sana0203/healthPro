@@ -8,96 +8,98 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Roboto:wght@500;700;900&display=swap" rel="stylesheet"> 
-
-    <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap JavaScript Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <!-- Navbar Start -->
-<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 wow fadeIn" data-wow-delay="0.1s">
-    <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-        <h1 class="m-0 text-primary"><i class="far fa-hospital me-3"></i>HealthPro</h1>
-    </a>
-    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="index.html" class="nav-item nav-link active">Dashboard</a>
-            <a href="about.html" class="nav-item nav-link">Manage Users</a>
-            <a href="service.html" class="nav-item nav-link">Reports</a>
-            <a href="service.html" class="nav-item nav-link">System Settings</a>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                    Your Account
-                </a>
-                <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                    <a href="profile.html" class="dropdown-item">Profile</a>
-                    <a href="404.html" class="dropdown-item">Setting</a>
-                    <a href="404.html" class="dropdown-item">Sign out</a>
+    <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 wow fadeIn" data-wow-delay="0.1s">
+        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <h1 class="m-0 text-primary"><i class="far fa-hospital me-3"></i>HealthPro</h1>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        Your Account
+                    </a>
+                    <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                        <a href="profile-patient.html" class="dropdown-item">Profile</a>
+                        <a href="setting-patient.html" class="dropdown-item">Setting</a>
+                        <a href="login.html" class="dropdown-item">Sign out</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</nav>
-<!-- Navbar End -->
+    </nav>
+    <!-- Navbar End -->
+    
     <!-- Dashboard Header -->
     <header class="dashboard-header bg-primary">
         <h1 id="welcomeMessage">Welcome, [Patient's Name]</h1>
-        <p id="lastLogin">Last Login: [Date & Time]</p>
     </header>
 
-    <!-- Dashboard Sections -->
+    <!-- Exam Results Table -->
     <div class="container mt-5">
-        <div class="row">
-            <!-- Upcoming Appointments -->
-            <div class="col-md-6">
-                <div class="dashboard-section">
-                    <h3>Upcoming Appointments</h3>
-                    <ul id="appointments"></ul>
-                </div>
-            </div>
-
-            <!-- Health Monitoring -->
-            <div class="col-md-6">
-                <div class="dashboard-section">
-                    <h3>Health Monitoring</h3>
-                    <p id="bloodPressure">Your latest blood pressure reading: </p>
-                    <p id="heartRate">Heart rate: </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Additional sections here... -->
-
+        <h2>Your Medical Exam Results</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Result Date</th>
+                    <th>Abnormality</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody id="examResultsBody">
+                <!-- Exam results will be populated here -->
+            </tbody>
+        </table>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="js/patientDashboard.js"></script> <!-- Link to the JavaScript file -->
-    <script src="js/script.js"></script> <!-- Link to the JavaScript file -->
+    <script>
+
+        // Retrieve user data from local storage/get patient name
+        const userData = JSON.parse(localStorage.getItem('user'));
+
+        // Check if user data exists and set the welcome message
+        if (userData && userData.name) {
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userData.name}`;
+        } else {
+            document.getElementById('welcomeMessage').textContent = 'Welcome, Guest';
+        }
+
+        // Sample exam results data
+        const examResults = [
+            { result: 'Normal', resultID: 1, rangemax: 100, rangemin: 80, resultdate: '2023-01-15', abnormality: 'No', TestID: 101, TestName: 'Blood Pressure' },
+            { result: 'High', resultID: 2, rangemax: 120, rangemin: 90, resultdate: '2023-02-20', abnormality: 'Yes', TestID: 102, TestName: 'Cholesterol' },
+            { result: 'Normal', resultID: 3, rangemax: 5.5, rangemin: 4.0, resultdate: '2023-03-10', abnormality: 'No', TestID: 103, TestName: 'Blood Sugar' },
+            { result: 'Low', resultID: 4, rangemax: 15, rangemin: 10, resultdate: '2023-04-05', abnormality: 'Yes', TestID: 104, TestName: 'Hemoglobin' }
+        ];
+
+        // Function to populate the exam results table
+        function populateExamResults() {
+            const tbody = document.getElementById('examResultsBody');
+            examResults.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.TestName}</td>
+                    <td>${result.resultdate}</td>
+                    <td>${result.abnormality}</td>
+                    <td>${result.result}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Call the function to populate the table on page load
+        document.addEventListener('DOMContentLoaded', populateExamResults);
+    </script>
 </body>
 </html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>HealthPro</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Roboto:wght@500;700;900&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Navbar Staff Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 wow fadeIn" data-wow-delay="0.1s">
+        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <h1 class="m-0 text-primary"><i class="far fa-hospital me-3"></i>HealthPro</h1>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="index.html" class="nav-item nav-link active">Dashboard</a>
+                <a href="about.html" class="nav-item nav-link">Patient Records</a>
+                <a href="service.html" class="nav-item nav-link">Messages</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        Your Account
+                    </a>
+                    <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                        <a href="profile-staff.html" class="dropdown-item">Profile</a>
+                        <a href="setting-staff.html" class="dropdown-item">Setting</a>
+                        <a href="login.html" class="dropdown-item">Sign out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Profile Start -->
+    <div class="container-xl py-5">
+        <div class="container">
+            <div class="col-lg-6 mx-auto wow fadeInUp" data-wow-delay="0.1s">
+                <p class="d-inline-block border rounded-pill py-1 px-4">Profile</p>
+                <h1 class="mb-4">Staff information</h1>
+                
+                <!-- Profile Information Form -->
+                <div class="bg-light rounded h-100 d-flex p-5">
+                    <form id="profileUserInfo" class="w-100">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="profileId" class="form-label">ID</label>
+                                <input required disabled type="text" name="profileId" id="profileId" class="form-control border-0" placeholder="ID" style="height: 55px;">
+                            </div>
+                            <div class="col-12">
+                                <label for="profileName" class="form-label">Name</label>
+                                <input type="text" name="profileName" id="profileName" class="form-control border-0" placeholder="Name" style="height: 55px;">
+                            </div>
+                            <div class="col-12">
+                                <label for="profileEmail" class="form-label">Email</label>
+                                <input required type="email" name="profileEmail" id="profileEmail" class="form-control border-0" placeholder="Email" style="height: 55px;">
+                            </div>
+                            <div class="col-12">
+                                <label for="profilePhone" class="form-label">Phone Number</label>
+                                <input required type="text" name="profilePhone" id="profilePhone" class="form-control border-0" placeholder="Phone number" style="height: 55px;">
+                            </div>
+                            <div class="col-12">
+                                <label for="profileGender" class="form-label">Gender</label>
+                                <select required name="profileGender" id="profileGender" class="form-select border-0" style="height: 55px;">
+                                    <option disabled selected value>Gender</option>
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="profileDateOfBirth" class="form-label">Date of Birth</label>
+                                <div class="date" id="date" data-target-input="nearest">
+                                    <input type="text" id="profileDateOfBirth" name="profileDateOfBirth" required
+                                        class="form-control border-0 datetimepicker-input"
+                                        placeholder="Date of birth" data-target="#date" data-toggle="datetimepicker" style="height: 55px;">
+                                </div>
+                            </div>
+                            <div class="col-12" style="display: none;" id="profileError">
+                                <p class="text-danger" id="profileErrorMessage">Please complete the form with valid inputs!</p>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit">Save changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Profile End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Retrieve user information from local storage
+            const userInfo = JSON.parse(localStorage.getItem('user'));
+            if (userInfo) {
+                document.getElementById('profileId').value = userInfo.workID;
+                document.getElementById('profileName').value = userInfo.name;
+                document.getElementById('profileEmail').value = userInfo.email;
+                document.getElementById('profilePhone').value = userInfo.phone;
+                document.getElementById('profileDateOfBirth').value = userInfo.dateOfBirth;
+                document.getElementById('profileGender').value = userInfo.gender || 'other';
+            }
+
+            // Handle form submission with validation
+            const profileUserInfo = document.getElementById('profileUserInfo');
+            if (profileUserInfo) {
+                profileUserInfo.addEventListener('submit', (e) => {
+                    console.log("hey");
+                    e.preventDefault();
+
+                    // Define variables for profile form
+                    const profileName = document.getElementById('profileName').value;
+                    const profileEmail = document.getElementById('profileEmail').value;
+                    const profilePhone = document.getElementById('profilePhone').value;
+                    const profileGender = document.getElementById('profileGender').value;
+                    const profileDateOfBirth = document.getElementById('profileDateOfBirth').value;
+                    const profileError = document.getElementById("profileError");
+                    const profileErrorMessage = document.getElementById("profileErrorMessage");
+
+                    let errorMessage = [];
+
+                    // Validate Name
+                    if (!/^[a-zA-Z\s]+$/.test(profileName)) {
+                        errorMessage.push("Name must contain only letters");
+                    }
+
+                    // Validate Email
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(profileEmail)) {
+                        errorMessage.push("Please enter a valid email address");
+                    }
+
+                    // Validate Phone
+                    const phonePattern = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/; 
+                    if (!phonePattern.test(profilePhone)) {
+                        errorMessage.push("Phone number must be 10 digits long and contain only numbers");
+                    }
+
+                    // Validate Gender
+                    if (profileGender === '') {
+                        errorMessage.push("Gender selection is required");
+                    }
+
+                    // Validate Date of Birth
+                    if (!Date.parse(profileDateOfBirth)) {
+                        errorMessage.push("Please enter a valid date of birth");
+                    }
+
+                    // Show error messages if any
+                    if (errorMessage.length > 0) {
+                        profileError.style.display = "block";
+                        profileErrorMessage.innerText = errorMessage.join(", ");
+                    } else {
+                        // Proceed with form submission
+                        profileError.style.display = "none";
+
+                        // Get updated values
+                        const updatedUserInfo = {
+                            workID: userInfo.workID, // Keep ID unchanged
+                            name: profileName,
+                            email: profileEmail,
+                            phone: profilePhone,
+                            gender: profileGender,
+                            dateOfBirth: profileDateOfBirth,
+                            image: userInfo.image, // Assuming image is not changed
+                            userType: userInfo.userType // Assuming userType is not changed
+                        };
+
+                        // Update local storage
+                        localStorage.setItem('user', JSON.stringify(updatedUserInfo));
+
+                        // Simulate backend update (replace with actual API call)
+                        // Example: updateUser InBackend(updatedUser Info);
+
+                        // Show success alert
+                        alert('Profile updated successfully!');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
