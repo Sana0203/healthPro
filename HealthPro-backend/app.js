@@ -1,38 +1,69 @@
 const express = require('express');
-const { Client } = require('pg'); // PostgreSQL client for Node.js
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const dataRoutes = require('./routes/dataRoutes'); // Import your routes file
+const { poolPromise } = require('./db'); // Import and verify the database connection
+require('dotenv').config(); // Use environment variables
+const cors = require('cors'); // Import CORS package
+const logger = require('morgan'); // Importing logging middleware (optional)
 
-// Set up PostgreSQL client
-const client = new Client({
-  user: 'AmritjotSingh',
-  host: 'yourDatabaseHost', // Private IP or hostname of the database
-  database: 'yourDatabaseName',
-  password: 'yourPassword',
-  port: 5432, // PostgreSQL default port
+// Middleware for parsing JSON
+app.use(express.json());
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Use morgan for HTTP request logging in development mode
+if (process.env.NODE_ENV === 'development') {
+    app.use(logger('dev'));
+}
+
+// Function to verify the database connection
+async function verifyDatabaseConnection() {
+    try {
+        const pool = await poolPromise; // Wait for the database pool to initialize
+        console.log('Database connection verified.');
+    } catch (err) {
+        console.error('Failed to connect to the database on startup:', err);
+        process.exit(1); // Exit if the database connection fails
+    }
+}
+
+// Verify database connection on startup
+verifyDatabaseConnection();
+
+// Root route for testing the server
+app.get('/', (req, res) => {
+    res.send('Welcome to the HealthPro Backend API!');
 });
 
-// Connect to the database
-client.connect()
-  .then(() => console.log('Connected to the database'))
-  .catch(err => console.error('Error connecting to the database', err));
+// Use the data routes
+app.use('/api', dataRoutes); // All routes will be under /api
 
-// API endpoint to fetch data from the database
-app.get('/api/getData', async (req, res) => {
-  try {
-    const result = await client.query('SELECT * FROM your_table');
-    res.json(result.rows); // Send the data from the database to the frontend
-  } catch (err) {
-    console.error('Error fetching data from database', err);
-    res.status(500).send('Error fetching data');
-  }
+// Centralized error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Server error:', err.stack);
+    res.status(500).json({ message: 'An internal server error occurred.' });
 });
 
-// Serve static HTML frontend (optional)
-app.use(express.static('public')); // Assuming your HTML files are in the "public" folder
+// Catch-all route for undefined endpoints
+app.use((req, res) => {
+    res.status(404).send('Route not found');
+});
 
 // Start the server
+const PORT = process.env.PORT || 5501; // Use the environment variable or default to 5501
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// Graceful shutdown: Listen for SIGINT (Ctrl+C) and close the server and DB connection gracefully
+process.on('SIGINT', async () => {
+    console.log('Shutting down server...');
+    try {
+        await poolPromise.then(pool => pool.close()); // Close the database pool
+        console.log('Database connection closed.');
+    } catch (err) {
+        console.error('Error closing database connection:', err);
+    }
+    process.exit(0); // Exit the process
 });

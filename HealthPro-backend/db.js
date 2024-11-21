@@ -1,26 +1,69 @@
-const { Client } = require('pg');  // Import the PostgreSQL client
+const sql = require('mssql');
 
-// PostgreSQL connection configuration
+// Configuration for the SQL Server connection
 const config = {
-    user: 'AmritjotSingh@healthpro1',  // Azure PostgreSQL Username
-    host: 'healthpro1.database.windows.net',  // Azure PostgreSQL server address
-    database: 'healthpro',             // Your PostgreSQL database name
-    password: 'ammy@Ammy',             // PostgreSQL password
-    port: 5432,                        // Default port for PostgreSQL
-    ssl: { rejectUnauthorized: false }  // Disable SSL validation (for Azure)
+    user: 'AmritjotSingh', // Replace with your database username
+    password: 'ammy@Ammy', // Replace with your database password
+    server: 'healthpro1.database.windows.net', // Replace with your SQL Server address
+    database: 'healthpro', // Replace with your database name
+    options: {
+        encrypt: true, // Use true if you're connecting to Azure SQL
+        trustServerCertificate: true // Change as needed
+    },
+    pool: {
+        max: 10,
+        min: 0,
+        idleTimeoutMillis: 30000 // Time (ms) before unused connections are closed
+    }
 };
 
-// Function to connect to the database
-async function connectToDatabase() {
-    const client = new Client(config);
+// A single pool instance to be reused
+let poolPromise = null;
+
+// Function to create and return the connection pool (singleton pattern)
+async function createPool() {
+    if (!poolPromise) {
+        poolPromise = new sql.ConnectionPool(config).connect()
+            .then(pool => {
+                console.log('Connected to SQL Server');
+                return pool;
+            })
+            .catch(err => {
+                console.error('Database connection failed:', err);
+                throw new Error('Database initialization error');
+            });
+    }
+    return poolPromise;
+}
+
+// Optional: Test the connection (for debugging)
+async function testConnection(pool) {
     try {
-        await client.connect();  // Connect to PostgreSQL
-        console.log('Connected to Azure PostgreSQL Database!');
-        return client;  // Return the client object to perform queries
+        const result = await pool.request().query('SELECT 1 AS test');
+        console.log('Test query successful:', result.recordset);
     } catch (err) {
-        console.error('Database connection failed:', err);
-        throw err;
+        console.error('Test query failed:', err);
     }
 }
 
-module.exports = connectToDatabase;
+// Example function to query data
+async function getData() {
+    const pool = await createPool();
+    await testConnection(pool);
+
+    // Example of querying data
+    try {
+        const result = await pool.request().query('SELECT * FROM users');
+        console.log('Data:', result.recordset);
+    } catch (err) {
+        console.error('Query failed:', err);
+    }
+}
+
+// Exporting the necessary components
+module.exports = {
+    sql,
+    createPool,
+    testConnection,
+    getData
+};
