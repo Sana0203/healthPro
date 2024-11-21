@@ -6,11 +6,11 @@ const PORT = process.env.PORT || 3000;
 
 // Set up PostgreSQL client
 const client = new Client({
-  user: 'AmritjotSingh',
-  host: 'yourDatabaseHost', // Private IP or hostname of the database
-  database: 'yourDatabaseName',
+  user: 'healthpro',
+  host: '127.0.0.1', // Private IP or hostname of the database
+  database: 'root',
   password: 'yourPassword',
-  port: 5432, // PostgreSQL default port
+  port: 5000, // PostgreSQL default port
 });
 
 // Connect to the database
@@ -21,7 +21,7 @@ client.connect()
 // API endpoint to fetch data from the database
 app.get('/api/getData', async (req, res) => {
   try {
-    const result = await client.query('SELECT * FROM your_table');
+    const result = await client.query('SELECT * FROM doctors');
     res.json(result.rows); // Send the data from the database to the frontend
   } catch (err) {
     console.error('Error fetching data from database', err);
