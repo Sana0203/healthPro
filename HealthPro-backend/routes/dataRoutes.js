@@ -4,7 +4,8 @@ const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatie
 
 const router = express.Router();
 
-router.get('/get_users', async (req, res) => { // Include req as a parameter
+// Route to get users
+router.get('/get_users', async (req, res) => {
     try {
         const users = await getData(); // Assuming getData() fetches the users
         console.log("Fetched users:", users); // Log the fetched users
@@ -15,7 +16,8 @@ router.get('/get_users', async (req, res) => { // Include req as a parameter
     }
 });
 
-router.get('/get_unapproved', async (req, res) => { // Include req as a parameter
+// Route to get unapproved patients
+router.get('/get_unapproved', async (req, res) => {
     try {
         const users = await getUnapprovedPatients();
         console.log("Fetched users:", users); // Log the fetched users
@@ -61,11 +63,11 @@ router.post('/add_doctors', async (req, res) => {
     }
 });
 
-// Route to add a doctor
+// Route to add a staff
 router.post('/add_staffs', async (req, res) => {
     try {
-        const staffData = req.body; // Get doctor data from request body
-        await addStaff(staffData);// Call the function to add the staff
+        const staffData = req.body; // Get staff data from request body
+        await addStaff(staffData); // Call the function to add the staff
         res.status(201).json({ message: 'Staff added successfully' }); // Send success response
     } catch (error) {
         console.error('Error adding staff:', error); // Log the error
@@ -73,11 +75,11 @@ router.post('/add_staffs', async (req, res) => {
     }
 });
 
-// Route to add a patient
+// Route to add a patient (with hardcoded user data for testing)
 router.get('/add_patient', async (req, res) => {
     const userData = {
         HealthID: 'P010',
-        UserType: 'Paient',
+        UserType: 'Patient',
         Name: 'Corina Tigran',
         Email: 'corina.tigran@gmail.com',
         PhoneNumber: '678-135-0979',
@@ -87,15 +89,15 @@ router.get('/add_patient', async (req, res) => {
         Image: '' // Only send the base64 part
     };
     try {
-        // const patientData = req.body; // Get doctor data from request body
-        await addPatient(userData) // Call the function to add the doctor
+        await addPatient(userData); // Call the function to add the patient
         res.status(201).json({ message: 'Patient added successfully' }); // Send success response
     } catch (error) {
-        console.error('Error adding doctor:', error); // Log the error
-        res.status(500).json({ error: 'Failed to add Patient' }); // Send error response
+        console.error('Error adding patient:', error); // Log the error
+        res.status(500).json({ error: 'Failed to add patient' }); // Send error response
     }
 });
 
+// Route to handle user login
 router.post('/login', async (req, res) => {
     const { UserID, Password, UserType } = req.body;
 
@@ -140,7 +142,7 @@ router.post('/login', async (req, res) => {
 
         // Compare the passwords (plain text comparison)
         console.log('Comparing passwords:', user.Password, Password);
-        if (user.Password !== Password) {
+        if (user.Password.trim() !== Password.trim()) {  // Trim whitespace for both password comparisons
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
