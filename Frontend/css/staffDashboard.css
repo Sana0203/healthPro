@@ -39,6 +39,7 @@ body {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .results-table {
@@ -49,11 +50,13 @@ body {
 .results-table th, .results-table td {
     padding: 10px;
     border: 1px solid #ddd;
+    text-align: center;
 }
 
 form label {
     display: block;
     margin-top: 10px;
+    
 }
 
 form input {
@@ -69,6 +72,89 @@ form button {
     color: white;
     border: none;
     cursor: pointer;
+}
+/* Modal Styles */
+#monitoringModal {
+    display: none;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+}
+
+/* Modal Content */
+#monitoringModal h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#monitoringModal p {
+    margin: 5px 0;
+}
+
+#monitoringModal label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#monitoringModal input {
+    width: calc(100% - 16px);
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#monitoringModal button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Buttons inside Modal */
+#saveMonitoring {
+    background-color: #007bff;
+    color: white;
+}
+
+#closeMonitoringModal {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Notification Alert */
+.notification-alert {
+    padding: 10px 20px;
+    background-color: #ffdddd;
+    color: #a94442;
+    border: 1px solid #a94442;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Buttons Styling for AI Features */
+.set-monitoring {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.set-monitoring:hover {
+    background-color: #0056b3;
 }
 
 .dashboard-section {

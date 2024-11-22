@@ -65,6 +65,7 @@
             <ul>
                 <li><a href="#modify-results">Modify Exam Results</a></li>
                 <li><a href="#enter-results">Enter New Test Results</a></li>
+                <li><a href="#monitoring-setup">Set Up Monitoring</a></li>
             </ul>
         </nav>
 
@@ -96,6 +97,17 @@
                 <label for="examResult">Exam Result:</label>
                 <input type="text" id="examResult" name="examResult" required>
                 <button type="submit">Update Result</button>
+            </form>
+        </section>
+        <!-- Set Up Monitoring Section -->
+        <section id="monitoring-setup" class="dashboard-section">
+            <h2>Set Up Monitoring</h2>
+            <form id="monitoringForm">
+                <label for="monitoringPatientName">Patient Name:</label>
+                <input type="text" id="monitoringPatientName" name="monitoringPatientName" required>
+                <label for="monitoringFunction">Monitoring Function:</label>
+                <input type="text" id="monitoringFunction" name="monitoringFunction" placeholder="e.g., Liver Function Test" required>
+                <button type="submit">Set Monitoring</button>
             </form>
         </section>
 
