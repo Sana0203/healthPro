@@ -339,6 +339,63 @@ async function approvePatient(healthID) {
     }
 }
 
+//Raghav
+async function getExams() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Patients tables
+    const query = `
+        SELECT * FROM Exams;
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('Unapproved patients query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
+// Function to add a doctor
+async function addExams(examData) {
+    const pool = await createPool();
+    try {
+        // Create a new connection pool
+        const pool = await sql.connect(config);
+        
+        // Start a transaction
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin();
+
+        try {
+            // Insert user into Users table
+            const userInsert = await transaction.request()
+                .input('ExanType', sql.NVarChar, examData.ExamType)
+                .input('ExamDate', sql.Date, examData.ExamDate)
+                .input('DoctorID', sql.NVarChar, examData.DoctorID)
+                .input('HealthID', sql.NVarChar, examData.HealthID)
+                .query('INSERT INTO Exams (ExanType, ExamDate, DoctorID, HealthID) VALUES (@ExamType, @ExamDate, @DoctorID, @HealthID)');
+
+                await transaction.commit();
+                console.log('Exams added successfully');
+
+        } catch (error) {
+            // Rollback the transaction in case of error
+            await transaction.rollback();
+            console.error('Error adding Exams:', error);
+            throw new Error('Failed to add Exams');
+        }
+    } catch (error) {
+        console.error('Database connection error:', error);
+        throw new Error('Database connection failed');
+    } 
+    
+}
+
+//Raghav Ends
+
 // Exporting the necessary components
 module.exports = {
     sql,
@@ -348,8 +405,11 @@ module.exports = {
     getAllUsers,
     addDoctor,
     addStaff,
+    addExams,
     addAdmin,
     addPatient,
     getUnapprovedPatients,
-    approvePatient
+    approvePatient,
+    getExams,
 };
+

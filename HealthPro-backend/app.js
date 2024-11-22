@@ -5,6 +5,8 @@ const { poolPromise } = require('./db'); // Import and verify the database conne
 require('dotenv').config(); // Use environment variables
 const cors = require('cors'); // Import CORS package
 const logger = require('morgan'); // Importing logging middleware (optional)
+const bodyParser = require('body-parser');
+app.use(bodyParser.json()); 
 
 // Middleware for parsing JSON
 app.use(express.json());
