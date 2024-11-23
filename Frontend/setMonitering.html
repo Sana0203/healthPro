@@ -36,9 +36,6 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="dashboard_doctor.html" class="nav-item nav-link active">Dashboard</a>
-                <a href="exam.html" class="nav-item nav-link">Prescribe Exam</a>
-                <a href="filter.html" class="nav-item nav-link">Exam Results</a>
-                <a href="setMonitering.html" class="nav-item nav-link">Health Monitoring</a>
                 <a href="about.html" class="nav-item nav-link">Patient Records</a>
                 <a href="filter.html" class="nav-item nav-link">Reports</a>
                 <a href="setMonitering.html" class="nav-item nav-link">Set Monitoring</a>
@@ -67,9 +64,9 @@
                 </div>
                 <form id="monitoringForm">
                     <div class="mb-3">
-                        <label for="healthId" class="form-label">Health ID</label>
+                        <label for="HealthID" class="form-label">Health ID</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="healthId" required>
+                            <input type="text" class="form-control" id="HealthID" required>
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#searchModal">
                                     <i class="fas fa-search" style="color: rgb(154, 160, 166); font-size: 18px;"></i>
@@ -78,15 +75,9 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="patientName" class="form-label">Patient Name:</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="patientName" required>
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#searchModal">
-                                    <i class="fas fa-search" style="color: rgb(154, 160, 166); font-size: 18px;"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <label for="DoctorID" class="form-label">Doctor ID</label>
+                        <!-- <input type="text" id="DoctorID" class="form-control border-0" placeholder="ID" style="height: 55px;" required> -->
+                        <input required disabled type="text" id="DoctorID" class="form-control border-0" placeholder="D004" style="height: 55px;" readonly />
                     </div>
                     <div class="mb-3">
                         <label for="monitoringType" class="form-label">Monitoring Type:</label>
@@ -115,7 +106,7 @@
                     <thead>
                         <tr >
                             <th>Health ID</th>
-                            <th>Patient Name</th>
+                            <th>DoctorID</th>
                             <th>Monitoring Type</th>
                             <th></th>
                         </tr>
