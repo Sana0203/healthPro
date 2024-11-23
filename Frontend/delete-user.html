@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <a href="service.html" class="nav-item nav-link">Reports</a>
-                <a href="service.html" class="nav-item nav-link">System Settings</a>
+                <a href="service.html" class=" nav-item nav-link">System Settings</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                         Your Account
@@ -78,7 +78,7 @@
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
                         <a href="profile-admin.html" class="dropdown-item">Profile</a>
                         <a href="setting-admin.html" class="dropdown-item">Setting</a>
-                        <a href="login.html" class="dropdown-item">Sign out</a>
+                        <a href="login.html" class="dropdown-item ">Sign out</a>
                     </div>
                 </div>
             </div>
@@ -96,8 +96,6 @@
         <div class="mb-3">
             <label for="userTypeSelect" class="form-label">Select User Type:</label>
             <select id="userTypeSelect" class="form-select">
-                <option value="all">All</option>
-                <option value="admin">Admin</option>
                 <option value="staff">Staff</option>
                 <option value="doctor">Doctor</option>
                 <option value="patient">Patient</option>
@@ -112,8 +110,11 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Name</th>
                         <th>ID</th>
+                        <th>Name</th>
+                        <th>User Type</th>
+                        <th>User Email</th>
+                        <th>User Phone Number</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -125,76 +126,136 @@
     </div>
 
     <script>
-        // Separate user data arrays
-        let adminUsers = [
-            { name: "John Doe", workId: "W123" }
-        ];
-        let staffUsers = [
-            { name: "Alice Johnson", workId: "W789" }
-        ];
-        let doctorUsers = [
-            { name: "Bob Brown", healthId: "H012" }
-        ];
-        let patientUsers = [
-            { name: "Jane Smith", healthId: "H456" }
-        ];
-    
+        // Function to fetch patients from the backend
+        async function fetchPatients() {
+            try {
+                const response = await fetch("http://localhost:5501/api/get_patients");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const patients = await response.json();
+                return patients.filter(patient => patient.removed !== 1); // Filter out removed patients
+            } catch (error) {
+                console.error('Error fetching patients:', error);
+                return [];
+            }
+        }
+        
+        // Function to fetch doctors from the backend
+        async function fetchDoctors() {
+            try {
+                const response = await fetch("http://localhost:5501/api/get_doctors");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const doctors = await response.json();
+                return doctors.filter(doctor => doctor.removed !== 1); // Filter out removed doctors
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+                return [];
+            }
+        }
+        
+        // Function to fetch staff from the backend
+        async function fetchStaff() {
+            try {
+                const response = await fetch("http://localhost:5501/api/get_staff");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const staff = await response.json();
+                return staff.filter(member => member.removed !== 1); // Filter out removed staff
+            } catch (error) {
+                console.error('Error fetching staff:', error);
+                return [];
+            }
+        }
+        
         // Function to display users in the table
         function displayUsers(usersToDisplay) {
             const userTableBody = document.getElementById('userTableBody');
             userTableBody.innerHTML = ''; // Clear existing rows
+        
+            if (usersToDisplay.length === 0) {
+                userTableBody.innerHTML = '<tr><td colspan="6">Not found, try again</td></tr>';
+                return;
+            }
+        
             usersToDisplay.forEach(user => {
                 const row = document.createElement('tr');
+                const userId = user.UserType === 'Patient' ? user.HealthID : user.WorkID; // Determine which ID to show
                 row.innerHTML = `
-                    <td>${user.name}</td>
-                    <td>${user.workId || user.healthId}</td>
-                    <td><button class="btn btn-danger" onclick="deleteUser ('${user.workId || user.healthId}', '${user.workId ? 'admin' : user.healthId ? 'doctor' : 'patient'}')">Delete Account</button></td>
+                    <td>${userId}</td>
+                    <td>${user.Name}</td>
+                    <td>${user.UserType}</td>
+                    <td>${user.Email}</td>
+                    <td>${user.PhoneNumber}</td>
+                    <td><button class="btn btn-danger" onclick="deleteUser ('${userId}', '${user.UserType}')">Delete Account</button></td>
                 `;
                 userTableBody.appendChild(row);
             });
         }
-    
+        
         // Function to search users
-        document.getElementById('searchButton').addEventListener('click', () => {
+        document.getElementById('searchButton').addEventListener('click', async () => {
             const searchInput = document.getElementById('searchInput').value.toLowerCase();
             const selectedType = document.getElementById('userTypeSelect').value;
-            let filteredUsers = [];
-    
-            if (selectedType === 'admin') {
-                filteredUsers = adminUsers.filter(user => user.name.toLowerCase().includes(searchInput) || user.workId.toLowerCase().includes(searchInput));
-            } else if (selectedType === 'staff') {
-                filteredUsers = staffUsers.filter(user => user.name.toLowerCase().includes(searchInput) || user.workId.toLowerCase().includes(searchInput));
+        
+            let usersToDisplay = [];
+        
+            if (selectedType === 'patient') {
+                usersToDisplay = await fetchPatients();
             } else if (selectedType === 'doctor') {
-                filteredUsers = doctorUsers.filter(user => user.name.toLowerCase().includes(searchInput) || user.healthId.toLowerCase().includes(searchInput));
-            } else if (selectedType === 'patient') {
-                filteredUsers = patientUsers.filter(user => user.name.toLowerCase().includes(searchInput) || user.healthId.toLowerCase().includes(searchInput));
-            } else {
-                // If 'all' is selected, combine all users
-                filteredUsers = [...adminUsers, ...staffUsers, ...doctorUsers, ...patientUsers].filter(user => 
-                    user.name.toLowerCase().includes(searchInput) || 
-                    (user.workId || user.healthId).toLowerCase().includes(searchInput)
-                );
+                usersToDisplay = await fetchDoctors();
+            } else if (selectedType === 'staff') {
+                usersToDisplay = await fetchStaff();
             }
+        
+            // Filter the users based on search input
+            const filteredUsers = usersToDisplay.filter(user => {
+                const id = user.UserType === 'Patient' ? user.HealthID : user.WorkID;
+                return user.Name.toLowerCase().includes(searchInput) || id.toLowerCase().includes(searchInput);
+            });
+        
             displayUsers(filteredUsers);
         });
-    
-        // Function to delete a user
-        function deleteUser (id, type) {
-            if (type === 'admin') {
-                adminUsers = adminUsers.filter(user => user.workId !== id); // Remove user from adminUsers
-            } else if (type === 'staff') {
-                staffUsers = staffUsers.filter(user => user.workId !== id); // Remove user from staffUsers
-            } else if (type === 'doctor') {
-                doctorUsers = doctorUsers.filter(user => user.healthId !== id); // Remove user from doctorUsers
-            } else if (type === 'patient') {
-                patientUsers = patientUsers.filter(user => user.healthId !== id); // Remove user from patientUsers
+        
+        async function deleteUser (id, type) {
+            const userType = type; // Use the type passed to the function directly
+
+            console.log(`Deleting user with ID: ${id}, Type: ${userType}`); // Log the ID and type
+
+            // Prepare the request options
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, userType }), // Send the ID and user type
+            };
+
+            try {
+                const response = await fetch('http://localhost:5501/api/delete_user', requestOptions);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json(); // Assuming the backend returns a JSON response
+                console.log(result.message); // Log the response message (if any)
+
+                // Show alert based on the result
+                alert(result.message || 'User  deleted successfully!');
+
+                // Refresh the user list after deletion
+                document.getElementById('searchButton').click(); // Trigger the search button to refresh the list
+
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('Failed to delete user. Please try again.');
             }
-            // Refresh the user list after deletion
-            displayUsers([...adminUsers, ...staffUsers, ...doctorUsers, ...patientUsers]);
         }
-    
-        // Initial display of users
-        displayUsers([...adminUsers, ...staffUsers, ...doctorUsers, ...patientUsers]);
+        
+        // Initial display of users can be omitted as we are fetching them based on selection
     </script>
 </body>
 </html>

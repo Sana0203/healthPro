@@ -305,6 +305,97 @@ async function getUnapprovedPatients() {
     }
 }
 
+async function getAllPatients() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Patients tables
+    const query = `
+        SELECT 
+            u.UserType, 
+            u.Name, 
+            u.Email, 
+            u.PhoneNumber, 
+            u.DateOfBirth, 
+            u.Password, 
+            u.Image, 
+            p.HealthID,
+            p.Approved
+        FROM 
+            Users u
+        JOIN 
+            Patients p ON u.UserID = p.UserID
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('All patients query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
+async function getAllDoctors() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Doctors tables
+    const query = `
+        SELECT 
+            u.UserType, 
+            u.Name, 
+            u.Email, 
+            u.PhoneNumber, 
+            u.DateOfBirth, 
+            u.Password, 
+            u.Image, 
+            d.WorkID
+        FROM 
+            Users u
+        JOIN 
+            Doctors d ON u.UserID = d.UserID
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('All doctors query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
+async function getAllStaff() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Staff tables
+    const query = `
+        SELECT 
+            u.UserType, 
+            u.Name, 
+            u.Email, 
+            u.PhoneNumber, 
+            u.DateOfBirth, 
+            u.Password, 
+            u.Image, 
+            s.WorkID
+        FROM 
+            Users u
+        JOIN 
+            Staff s ON u.UserID = s.UserID
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('All staff query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
 async function approvePatient(healthID) {
     const pool = await createPool();
     
@@ -339,6 +430,199 @@ async function approvePatient(healthID) {
     }
 }
 
+async function deleteUser (userID, userType) {
+    const pool = await createPool();
+
+    try {
+        await testConnection(pool);
+        console.log("Connection successful");
+        let result;
+        let userIdToDelete;
+
+        // Check if the user exists in the appropriate table based on UserType
+        if (userType === 'Patient') {
+            // Check if the patient exists
+            result = await pool.request()
+                .input('HealthID', sql.NVarChar, userID)
+                .query(`
+                    SELECT * FROM Patients 
+                    WHERE HealthID = @HealthID
+                `);
+            if (result.recordset.length === 0) {
+                return { success: false, message: `No patient found with HealthID: ${userID}` };
+            }
+            userIdToDelete = result.recordset[0].UserID; // Assuming UserID is a column in Patients
+
+            // Delete from Patients table
+            await pool.request()
+                .input('HealthID', sql.NVarChar, userID)
+                .query(`
+                    DELETE FROM Patients 
+                    WHERE HealthID = @HealthID
+                `);
+
+        } else if (userType === 'Doctor') {
+            // Check if the doctor exists
+            result = await pool.request()
+                .input('WorkID', sql.NVarChar, userID)
+                .query(`
+                    SELECT * FROM Doctors 
+                    WHERE WorkID = @WorkID
+                `);
+            if (result.recordset.length === 0) {
+                return { success: false, message: `No doctor found with WorkID: ${userID}` };
+            }
+            userIdToDelete = result.recordset[0].UserID; // Assuming UserID is a column in Doctors
+
+            // Delete from Doctors table
+            await pool.request()
+                .input('WorkID', sql.NVarChar, userID)
+                .query(`
+                    DELETE FROM Doctors 
+                    WHERE WorkID = @WorkID
+                `);
+        } else if (userType === 'Staff') {
+            // Check if the staff exists
+            result = await pool.request()
+                .input('WorkID', sql.NVarChar, userID)
+                .query(`
+                    SELECT * FROM Staff 
+                    WHERE WorkID = @WorkID
+                `);
+            if (result.recordset.length === 0) {
+                return { success: false, message: `No staff found with WorkID: ${userID}` };
+            }
+            userIdToDelete = result.recordset[0].UserID; // Assuming UserID is a column in Staff
+
+            // Delete from Staff table
+            await pool.request()
+                .input('WorkID', sql.NVarChar, userID)
+                .query(`
+                    DELETE FROM Staff 
+                    WHERE WorkID = @WorkID
+                `);
+        } else {
+            return { success: false, message: 'Invalid UserType provided' };
+        }
+
+        // Now attempt to delete from Users table
+        try {
+            const deleteUserResult = await pool.request()
+                .input('User ID', sql.Int, userIdToDelete) // Assuming UserID is an integer
+                .query(`
+                    DELETE FROM Users 
+                    WHERE UserID = @UserID
+                `);
+
+            if (deleteUserResult.rowsAffected[0] === 0) {
+                return { success: false, message: 'User  found in specific table but not in Users table' };
+            }
+
+            console.log(`User  with ${userType === 'Patient' ? 'HealthID' : 'WorkID'}: ${userID} deleted successfully.`);
+            return { success: true, message: 'User  deleted successfully' };
+
+        } catch (deleteError) {
+            console.error('Error deleting user from Users table:', deleteError);
+
+            // If deletion fails, update the remove attribute instead
+            const updateUserResult = await pool.request()
+                .input('User ID', sql.Int, userIdToDelete) // Assuming UserID is an integer
+                .query(`
+                    UPDATE Users 
+                    SET remove = 1 
+                    WHERE UserID = @UserID
+                `);
+
+            if (updateUserResult.rowsAffected[0] === 0) {
+                return { success: false, message: 'User  found in specific table but not in Users table to update' };
+            }
+
+            console.log(`User  with ${userType === 'Patient' ? 'HealthID' : 'WorkID'}: ${userID} could not be deleted and has been marked as removed temporarily.`);
+            return { success: true, message: 'User  could not be deleted and has been marked as removed temporarily' };
+        }
+
+    } catch (error) {
+        console.error('Error processing user removal:', error);
+        return { success: false, message: 'Error occurred while processing user removal' };
+    } finally {
+        // Close the connection
+        await sql.close();
+    }
+}
+
+async function updateProfile(userData) {
+    const pool = await createPool();
+
+    try {
+        await testConnection(pool); 
+        console.log("Connection successful");
+
+        // Extract userID from userData
+        const { UserID, Name, Email, PhoneNumber, DateOfBirth, Gender } = userData;
+
+        // Query to update the relevant fields for the user
+        const result = await pool.request()
+            .input('UserID', sql.Int, UserID)
+            .input('Name', sql.NVarChar, Name)
+            .input('Email', sql.NVarChar, Email)
+            .input('PhoneNumber', sql.NVarChar, PhoneNumber)
+            .input('DateOfBirth', sql.Date, DateOfBirth)
+            .input('Gender', sql.NVarChar, Gender)
+            .query(`
+                UPDATE Users 
+                SET 
+                    Name = @Name,
+                    Email = @Email,
+                    PhoneNumber = @PhoneNumber,
+                    DateOfBirth = @DateOfBirth,
+                    Gender = @Gender
+                WHERE UserID = @UserID
+            `);
+        
+        // Check if any rows were affected
+        if (result.rowsAffected[0] === 0) {
+            console.log(`No user found with UserID: ${UserID}`);
+            return { success: false, message: 'No user found or no changes made' };
+        }
+
+        console.log(`User  with UserID: ${UserID} updated successfully.`);
+        return { success: true, message: 'User  updated successfully' };
+        
+    } catch (error) {
+        console.error('Error updating user:', error);
+        throw error; // Rethrow the error for handling in the calling function
+    } finally {
+        // Close the connection
+        await sql.close();
+    }
+}
+
+
+async function changeUserPassword(UserID, hashedPassword) {
+    try {
+        const pool = await createPool();
+        const result = await pool.request()
+            .input('UserID', sql.Int, UserID)
+            .input('Password', sql.NVarChar, hashedPassword)
+            .query(`
+                UPDATE Users 
+                SET Password = @Password
+                WHERE UserID = @UserID
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return { success: false, message: 'User not found or no changes made.' };
+        }
+
+        return { success: true, message: 'Password changed successfully.' };
+    } catch (error) {
+        console.error('Database update error:', error);
+        throw new Error('Database update failed');
+    } finally {
+        await sql.close();
+    }
+}
+
 // Exporting the necessary components
 module.exports = {
     sql,
@@ -351,5 +635,11 @@ module.exports = {
     addAdmin,
     addPatient,
     getUnapprovedPatients,
-    approvePatient
+    approvePatient,
+    getAllPatients,
+    getAllStaff,
+    getAllDoctors,
+    deleteUser,
+    updateProfile,
+    changeUserPassword
 };

@@ -158,7 +158,7 @@
     // Change Password Form Submission
     const settingPassChangeForm = document.getElementById('settingPassChangeForm');
     if (settingPassChangeForm) {
-        settingPassChangeForm.addEventListener('submit', (e) => {
+        settingPassChangeForm.addEventListener('submit', async (e) => {
             // Define the variables for the form
             const oldPassword = document.getElementById('oldPassword').value;
             const newPassword = document.getElementById('newPassword').value;
@@ -170,12 +170,12 @@
             e.preventDefault();
 
             let errorMessage = [];
-
+            
             // Validate Old Password
             const storedPassword = JSON.parse(localStorage.getItem('user'));
             if (oldPassword === '') {
                 errorMessage.push("Old password is required");
-            } else if (oldPassword !== storedPassword.password) {
+            } else if (oldPassword !== storedPassword.Password) {
                 errorMessage.push("Old password does not match");
             }
 
@@ -201,29 +201,73 @@
                 // Proceed with form submission or further processing
                 passwordError.style.display = "none";
 
-                // Update password in local storage
-                storedPassword.password = newPassword;
-                console.log(storedPassword);
-                // Update local storage
-                localStorage.setItem('user', JSON.stringify(storedPassword));
+                // Prepare data to send to the backend
+                const userId = storedPassword.UserID; // Assuming UserID is stored in localStorage
+                const data = {
+                    UserID: userId,
+                    NewPassword: newPassword
+                };
 
+                try {
+                    // Send the new password to the backend
+                    const response = await fetch('http://localhost:5501/api/change_password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
 
-                // Show success alert
-                alert('Password changed successfully!');
+                    const result = await response.json();
 
-                // Reset the form
-                settingPassChangeForm.reset();
+                    if (response.ok) {
+                        // Show success alert
+                        alert('Password changed successfully!');
+                        // Update password in local storage
+                        storedPassword.Password = newPassword;
+                        localStorage.setItem('user', JSON.stringify(storedPassword));
+                        // Reset the form
+                        settingPassChangeForm.reset();
+                    } else {
+                        // Handle error response
+                        passwordError.style.display = "block";
+                        passwordErrorMessage.innerText = result.error;
+                    }
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    passwordError.style.display = "block";
+                    passwordErrorMessage.innerText = 'Failed to change password. Please try again.';
+                }
             }
         });
     }
+
     document.addEventListener('DOMContentLoaded', () => {
+
+        const userData = {
+            UserID: "removed",
+            WorkID: 'A001',
+            UserType: "Administrator",
+            Name: "Sarah Lee",
+            Email: "sarahlee@healthpro.com",
+            PhoneNumber: "555-987-6543",
+            DateOfBirth: "1975-03-14",
+            Password: "password",
+            Image:"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"
+        }
+
+        localStorage.setItem('user', JSON.stringify(userData));
+
         const profileImageInput = document.getElementById('profileImage');
         const profileImagePreview = document.getElementById('profileImagePreview');
-        
+        const defaultImageSrc = 'img/profileimage.png'; // Path to your default image
+
         // Load the existing image from local storage if available
         const storedUser  = JSON.parse(localStorage.getItem('user'));
-        if (storedUser  && storedUser.image) {
-            profileImagePreview.src = storedUser.image;
+        if (storedUser  && storedUser.Image) {
+            profileImagePreview.src = storedUser.Image; // Load image from local storage
+        } else {
+            profileImagePreview.src = defaultImageSrc; // Set default image if no image is found
         }
 
         // Make the profile image clickable to trigger the file input
@@ -241,8 +285,10 @@
                     profileImagePreview.src = event.target.result;
 
                     // Update the user object in local storage
-                    storedUser.image = event.target.result;
-                    localStorage.setItem('user', JSON.stringify(storedUser ));
+                    if (storedUser ) {
+                        storedUser .image = event.target.result;
+ localStorage.setItem('user', JSON.stringify(storedUser ));
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -256,5 +302,6 @@
         });
     });
 </script>
+
 </body>
 </html>

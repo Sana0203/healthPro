@@ -153,13 +153,15 @@
     </div>
 
     <script>
-
+        const defaultImageSrc = 'img/profileimage.png'; // Path to your default image
+    
         function toggleRegistrationSection() {
             const userType = document.getElementById('userTypeSelect').value;
             document.getElementById('registerSection').style.display = 'block';
             document.getElementById('registerForm').reset();
+            document.getElementById('profileImagePreview').src = defaultImageSrc; // Set default image on reset
         }
-
+    
         function validateImage() {
             const profileImage = document.getElementById('profileImage').files[0];
             const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -176,7 +178,7 @@
                 reader.readAsDataURL(profileImage);
             }
         }
-
+    
         async function registerUser (event) {
             event.preventDefault();
             const userType = document.getElementById('userTypeSelect').value;
@@ -188,42 +190,42 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const profileImage = document.getElementById('profileImage').files[0];
-
+    
             if (password !== confirmPassword) {
                 alert("Passwords do not match!");
                 return false;
             }
-
+    
             if (!profileImage) {
                 document.getElementById('imageError').style.display = 'block';
                 return false;
             }
-
+    
             const reader = new FileReader();
             reader.onload = async function (e) {
                 const img = new Image();
                 img.src = e.target.result;
-
+    
                 img.onload = async function () {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-
+    
                     const maxWidth = 150; // Reduced max width
                     const maxHeight = 150; // Reduced max height
                     let { width, height } = img;
-
+    
                     const ratio = Math.min(maxWidth / width, maxHeight / height);
                     width *= ratio;
                     height *= ratio;
-
+    
                     canvas.width = width;
                     canvas.height = height;
-
+    
                     ctx.drawImage(img, 0, 0, width, height);
-
+    
                     // Compress the image further by reducing quality
                     const base64Image = canvas.toDataURL('image/jpeg', 0.5); // Reduced quality to 0.5
-
+    
                     const userData = {
                         WorkID: workID,
                         UserType: userType,
@@ -234,55 +236,47 @@
                         Password: password,
                         Image: base64Image.split(',')[1] // Only send the base64 part
                     };
-
+    
                     try {
-
+                        let response;
                         if (userType == "doctor") {
-                            const response = await fetch('http://localhost:5501/api/add_doctors', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(userData)
+                            response = await fetch('http://localhost:5501/api/add_doctors', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(userData)
                             });
-                            
-                            if (!response.ok) {
-                                const errorData = await response.json();
-                                alert(`Error: ${errorData.message}`);
-                                return false;
-                            }
-                        }
-
-                        if (userType == "staff") {
-                            console.log("j");
-                            const response = await fetch('http://localhost:5501/api/add_staffs', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(userData)
+                        } else if (userType == "staff") {
+                            response = await fetch('http://localhost:5501/api/add_staffs', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(userData)
                             });
-
-                            if (!response.ok) {
-                                const errorData = await response.json();
-                                alert(`Error: ${errorData.message}`);
-                                return false;
-                            }
                         }
-
+    
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            alert(`Error: ${errorData.message}`);
+                            return false;
+                        }
+    
                         alert("User  registered successfully!");
                         document.getElementById('registerForm').reset();
                         document.getElementById('imageError').style.display = 'none';
-                        
+                        document.getElementById('profileImagePreview').src = defaultImageSrc; // Reset to default image
                     } catch (error) {
-                        console.error('Error:', error);
+                        console.error(' Error:', error);
                         alert('An unexpected error occurred. Please try again later.');
                     }
                 };
             };
             reader.readAsDataURL(profileImage);
         }
-
+        
     </script>
+
 </body>
 </html>

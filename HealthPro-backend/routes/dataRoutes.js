@@ -1,6 +1,6 @@
 const express = require('express');
 const sql = require('mssql');
-const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient } = require('../db'); // Import createPool function
+const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getAllPatients, getAllStaff, getAllDoctors, deleteUser, updateProfile, changeUserPassword } = require('../db'); // Import createPool function
 
 const router = express.Router();
 
@@ -12,6 +12,50 @@ router.get('/get_users', async (req, res) => { // Include req as a parameter
     } catch (error) {
         console.error('Error fetching users:', error); // Log the error for debugging
         res.status(500).json({ error: 'Failed to retrieve users' }); // Send an error response with status code 500
+    }
+});
+
+router.get('/get_users', async (req, res) => { // Include req as a parameter
+    try {
+        const users = await getData(); // Assuming getData() fetches the users
+        console.log("Fetched users:", users); // Log the fetched users
+        res.status(200).json(users); // Send a success response with status code 200
+    } catch (error) {
+        console.error('Error fetching users:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve users' }); // Send an error response with status code 500
+    }
+});
+
+router.get('/get_patients', async (req, res) => {
+    try {
+        const patients = await getAllPatients(); // Fetch all patients
+        console.log("Fetched patients:", patients); // Log the fetched patients
+        res.status(200).json(patients); // Send a success response with status code 200
+    } catch (error) {
+        console.error('Error fetching patients:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve patients' }); // Send an error response with status code 500
+    }
+});
+
+router.get('/get_staff', async (req, res) => {
+    try {
+        const staff = await getAllStaff(); // Fetch all staff
+        console.log("Fetched staff:", staff); // Log the fetched staff
+        res.status(200).json(staff); // Send a success response with status code 200
+    } catch (error) {
+        console.error('Error fetching staff:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve staff' }); // Send an error response with status code 500
+    }
+});
+
+router.get('/get_doctors', async (req, res) => {
+    try {
+        const doctors = await getAllDoctors(); // Fetch all doctors
+        console.log("Fetched doctors:", doctors); // Log the fetched doctors
+        res.status(200).json(doctors); // Send a success response with status code 200
+    } catch (error) {
+        console.error('Error fetching doctors:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve doctors' }); // Send an error response with status code 500
     }
 });
 
@@ -96,6 +140,25 @@ router.get('/add_patient', async (req, res) => {
     }
 });
 
+router.delete('/delete_user', async(req, res) => {
+    const { id, userType } = req.body; 
+    console.log('Request body:', req.body); // Log the request body for debugging
+
+    // Validate input
+    if (!id || !userType) {
+        return res.status(400).json({ error: 'userID and userType are required' });
+    }
+
+    try {
+        await deleteUser(id, userType);
+        console.log('Delete user result:'); // Log the result for debugging
+        res.status(201).json({ message: 'Account removed successfully' });
+    } catch (error) {
+        console.error('Error in delete_user route:', error);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+});
+
 router.post('/login', async (req, res) => {
     const { UserID, Password, UserType } = req.body;
 
@@ -162,6 +225,52 @@ router.post('/login', async (req, res) => {
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ message: 'An error occurred while processing your request.' });
+    }
+});
+
+router.post('/profile', async (req, res) => {
+    const userData = req.body; // Get user data from request body
+
+    // Validate the input
+    const { UserID, Name, Email, PhoneNumber, DateOfBirth, Gender } = userData;
+    if (!UserID || !Name || !Email || !PhoneNumber || !DateOfBirth || !Gender) {
+        return res.status(400).json({ error: 'User ID, Name, Email, PhoneNumber, DateOfBirth, and Gender are required' }); // Handle missing fields
+    }
+
+    try {
+        const result = await updateProfile(userData); // Call the update function
+
+        if (!result.success) {
+            return res.status(404).json({ error: result.message }); // Handle case where user is not found or no changes made
+        }
+
+        res.status(200).json({ message: result.message }); // Success response
+    } catch (error) {
+        console.error('Error updating user:', error); // Log the error
+        res.status(500).json({ error: 'Failed to update user' }); // Error response
+    }
+});
+
+router.post('/change_password', async (req, res) => {
+    const { UserID, NewPassword } = req.body; // Get UserID and NewPassword from request body
+
+    // Validate the input
+    if (!UserID || !NewPassword) {
+        return res.status(400).json({ error: 'User ID and NewPassword are required' }); // Handle missing fields
+    }
+
+    try {
+
+        const result = await changeUserPassword(UserID, NewPassword); // Call the update function
+
+        if (!result.success) {
+            return res.status(404).json({ error: result.message }); // Handle case where user is not found
+        }
+
+        res.status(200).json({ message: result.message }); // Success response
+    } catch (error) {
+        console.error('Error changing password:', error); // Log the error
+        res.status(500).json({ error: 'Failed to change password' }); // Error response
     }
 });
 
