@@ -87,6 +87,59 @@ async function getData() {
     }
 }
 
+async function addPatient(userData) {
+    console.log('addPatient function called with data:', userData);  // Log to check if function is called
+    const pool = await createPool();
+    try {
+         // Create a new connection pool
+         const pool = await sql.connect(config);
+        
+         // Start a transaction
+         const transaction = new sql.Transaction(pool);
+         await transaction.begin();
+        try{
+        // Insert user into the Users table
+        const userInsert = await transaction.request()
+            .input('UserType', sql.NVarChar, "Patient")
+            .input('Name', sql.NVarChar, userData.Name)
+            .input('Email', sql.NVarChar, userData.Email)
+            .input('PhoneNumber', sql.NVarChar, userData.PhoneNumber) // Corrected to sql.NVarChar for phone numbers
+            .input('DateOfBirth', sql.Date, userData.DateOfBirth)
+            .input('Password', sql.NVarChar, userData.Password)
+            .input('Gender', sql.NVarChar, userData.Gender)
+            .input('Image', sql.NVarChar, userData.Image || "") // Image is optional
+            .input('Removed', sql.Int, 0) // Default value for Removed field is 0
+            .query('INSERT INTO Users (UserType, Name, Email, PhoneNumber, DateOfBirth, Password, Gender, Image, Removed) OUTPUT INSERTED.UserID VALUES (@UserType, @Name, @Email, @PhoneNumber, @DateOfBirth, @Password, @Gender, @Image, @Removed)');
+
+        const userId = userInsert.recordset[0].UserID;
+        console.log('User inserted:', userInsert); // Log the result of the query
+
+        // Insert into Patients table
+        await transaction.request()
+            .input('HealthID', sql.NVarChar, userData.HealthID)
+            .input('Approved', sql.Bit, userData.Approved)
+            .input('UserID', sql.Int, userId)
+            .query('INSERT INTO Patients (HealthID, UserID, Approved) VALUES (@HealthID, @UserID, @Approved)');
+
+        await transaction.commit(); // Commit the transaction
+        console.log('User and patient added successfully');
+    } catch (error) {
+        console.error('Error during pool creation or transaction:', error);
+        
+        if (transaction) {
+            await transaction.rollback(); // Rollback if an error occurs
+        }
+
+        throw new Error('Failed to add user and patient');
+    }
+    
+}
+catch (error) {
+    console.error('Database connection error:', error);
+    throw new Error('Database connection failed');
+} 
+}
+
 // Function to add a doctor
 async function addDoctor(userData) {
     const pool = await createPool();
@@ -225,43 +278,6 @@ async function addAdmin(userData) {
     } 
 }
 
-async function addPatient(userData) {
-    try {
-        const pool = await createPool();
-        const transaction = new sql.Transaction(pool);
-        await transaction.begin();
-
-        // Insert user into the Users table
-        const userInsert = await transaction.request()
-            .input('UserType', sql.NVarChar, "Patient")
-            .input('Name', sql.NVarChar, userData.Name)
-            .input('Email', sql.NVarChar, userData.Email)
-            .input('PhoneNumber', sql.NVarChar, userData.PhoneNumber)
-            .input('DateOfBirth', sql.Date, userData.DateOfBirth)
-            .input('Password', sql.NVarChar, userData.Password)
-            .input('Gender', sql.NVarChar, userData.Gender)
-            .input('Image', sql.NVarChar, userData.Image || "") // Image is optional
-            .input('Removed', sql.Int, 0) // Default value for Removed field is 0
-            .query('INSERT INTO Users (UserType, Name, Email, PhoneNumber, DateOfBirth, Password, Gender, Image, Removed) OUTPUT INSERTED.UserID VALUES (@UserType, @Name, @Email, @PhoneNumber, @DateOfBirth, @Password, @Gender, @Image, @Removed)');
-
-        const userId = userInsert.recordset[0].UserID;
-
-        // Insert into Patients table
-        await transaction.request()
-            .input('HealthID', sql.NVarChar, userData.HealthID)
-            .input('Approved', sql.Bit, userData.Approved)
-            .input('UserID', sql.Int, userId)
-            .query('INSERT INTO Patients (HealthID, UserID, Approved) VALUES (@HealthID, @UserID, @Approved)');
-
-        await transaction.commit(); // Commit the transaction
-        console.log('User and patient added successfully');
-    } catch (error) {
-        await transaction.rollback(); // Rollback in case of error
-        console.error('Error adding user and patient:', error);
-        throw new Error('Failed to add user and patient');
-    }
-}
-
 async function getUnapprovedPatients() {
     const pool = await createPool();
 
@@ -329,80 +345,6 @@ async function approvePatient(healthID) {
     }
 }
 
-//Raghav
-async function getExams() {
-    const pool = await createPool();
-
-    // SQL query to join Users and Patients tables
-    const query = `
-        SELECT * FROM Exams;
-    `;
-
-    try {
-        const result = await pool.request().query(query);
-        console.log('Unapproved patients query successful:', result.recordset);
-        return result.recordset; // Return the fetched data as an array
-    } catch (err) {
-        console.error('Query failed:', err);
-        throw err; // Optionally throw the error to be handled by the calling function
-    }
-}
-
-// Function to add a doctor
-async function addExams(examData) {
-    try {
-        const pool = await sql.connect(config);
-        
-        // Start a transaction
-        const transaction = new sql.Transaction(pool);
-        await transaction.begin();
-
-        try {
-            // Insert into Exams table
-            const userInsert = await transaction.request()
-                .input('HealthID', sql.NVarChar, examData.HealthID)
-                .input('DoctorID', sql.NVarChar, examData.DoctorID)
-                .input('ExamDate', sql.Date, examData.ExamDate)
-                .input('ExamType', sql.NVarChar, examData.ExamType)
-                .query('INSERT INTO Exams (ExamType, ExamDate, DoctorID, HealthID) VALUES (@ExamType, @ExamDate, @DoctorID, @HealthID)');
-            
-            await transaction.commit();
-            console.log('Exam added successfully');
-        } catch (error) {
-            await transaction.rollback();
-            console.error('Error during transaction:', error.message);  // Log full error message
-            throw new Error('Failed to add Exam');
-        }
-    } catch (error) {
-        console.error('Database connection error:', error.message);  // Log the connection error
-        throw new Error('Database connection failed');
-    }
-}
-
-
-async function getPatients() {
-    const pool = await createPool();
-
-    // SQL query to join Users and Patients tables
-    const query = `
-        SELECT p.HealthID, u.Name
-        FROM Patients p
-        JOIN Users u ON p.UserID = u.UserID;
-    `;
-
-    try {
-        const result = await pool.request().query(query);
-        console.log('Test query successful:', result.recordset);
-        return result.recordset; // Return the fetched data as an array
-    } catch (err) {
-        console.error('Query failed:', err);
-        throw err; // Optionally throw the error to be handled by the calling function
-    }
-}
-
-
-//Raghav Ends
-
 // Exporting the necessary components
 module.exports = {
     sql,
@@ -412,12 +354,8 @@ module.exports = {
     getAllUsers,
     addDoctor,
     addStaff,
-    addExams,
     addAdmin,
     addPatient,
     getUnapprovedPatients,
-    approvePatient,
-    getExams,
-    getPatients,
+    approvePatient
 };
-
