@@ -1,6 +1,6 @@
 const express = require('express');
 const sql = require('mssql');
-const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getExams } = require('../db'); // Import createPool function
+const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getExams, addExams, getPatients } = require('../db'); // Import createPool function
 
 const router = express.Router();
 
@@ -165,9 +165,8 @@ router.post('/login', async (req, res) => {
     }
 });
 
-module.exports = router;
-
 // Raghav Change
+
 router.get('/exams', async (req, res) => { // Include req as a parameter
     try {
         const exams = await getExams(); // Assuming getData() fetches the users
@@ -179,7 +178,6 @@ router.get('/exams', async (req, res) => { // Include req as a parameter
     }
 });
 
-// Route to add a doctor
 router.post('/add_exams', async (req, res) => {
     try {
         const examData = req.body; // Get doctor data from request body
@@ -191,36 +189,18 @@ router.post('/add_exams', async (req, res) => {
     }
 });
 
-router.put('/exams/:id', (req, res) => {
-    const { id } = req.params;
-    const { ExamType, ExamDate, DoctorID, HealthID } = req.body;
-    const query = `UPDATE Exams 
-                   SET ExamType = ?, ExamDate = ?, DoctorID = ?, HealthID = ? 
-                   WHERE ExamID = ?`;
-    connection.query(query, [ExamType, ExamDate, DoctorID, HealthID, id], (err, results) => {
-        if (err) {
-            console.error('Error updating exam:', err);
-            res.status(500).send('Error updating exam');
-        } else if (results.affectedRows === 0) {
-            res.status(404).send('Exam not found');
-        } else {
-            res.json({ ExamID: id, ExamType, ExamDate, DoctorID, HealthID });
-        }
-    });
-});
-router.delete('/exams/:id', (req, res) => {
-    const { id } = req.params;
-    const query = `DELETE FROM Exams WHERE ExamID = ?`;
-    connection.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('Error deleting exam:', err);
-            res.status(500).send('Error deleting exam');
-        } else if (results.affectedRows === 0) {
-            res.status(404).send('Exam not found');
-        } else {
-            res.status(200).send('Exam deleted successfully');
-        }
-    });
+router.get('/get_patients', async (req, res) => { // Include req as a parameter
+    try {
+        const getPatients = await getPatients(); // Assuming getData() fetches the users
+        console.log("Fetched Patients:", getPatients); // Log the fetched users
+        res.status(200).json(getPatients); // Send a success response with status code 200
+    } catch (error) {
+        console.error('Error fetching patients:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve patients' }); // Send an error response with status code 500
+    }
 });
 
 //Raghav Change Ends
+
+module.exports = router;
+

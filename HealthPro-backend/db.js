@@ -360,9 +360,7 @@ async function getExams() {
 
 // Function to add a doctor
 async function addExams(examData) {
-    const pool = await createPool();
     try {
-        // Create a new connection pool
         const pool = await sql.connect(config);
         
         // Start a transaction
@@ -370,29 +368,48 @@ async function addExams(examData) {
         await transaction.begin();
 
         try {
-            // Insert user into Users table
+            // Insert into Exams table
             const userInsert = await transaction.request()
-                .input('ExanType', sql.NVarChar, examData.ExamType)
-                .input('ExamDate', sql.Date, examData.ExamDate)
-                .input('DoctorID', sql.NVarChar, examData.DoctorID)
                 .input('HealthID', sql.NVarChar, examData.HealthID)
-                .query('INSERT INTO Exams (ExanType, ExamDate, DoctorID, HealthID) VALUES (@ExamType, @ExamDate, @DoctorID, @HealthID)');
-
-                await transaction.commit();
-                console.log('Exams added successfully');
-
+                .input('DoctorID', sql.NVarChar, examData.DoctorID)
+                .input('ExamDate', sql.Date, examData.ExamDate)
+                .input('ExamType', sql.NVarChar, examData.ExamType)
+                .query('INSERT INTO Exams (ExamType, ExamDate, DoctorID, HealthID) VALUES (@ExamType, @ExamDate, @DoctorID, @HealthID)');
+            
+            await transaction.commit();
+            console.log('Exam added successfully');
         } catch (error) {
-            // Rollback the transaction in case of error
             await transaction.rollback();
-            console.error('Error adding Exams:', error);
-            throw new Error('Failed to add Exams');
+            console.error('Error during transaction:', error.message);  // Log full error message
+            throw new Error('Failed to add Exam');
         }
     } catch (error) {
-        console.error('Database connection error:', error);
+        console.error('Database connection error:', error.message);  // Log the connection error
         throw new Error('Database connection failed');
-    } 
-    
+    }
 }
+
+
+async function getPatients() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Patients tables
+    const query = `
+        SELECT p.HealthID, u.Name
+        FROM Patients p
+        JOIN Users u ON p.UserID = u.UserID;
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('Test query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
 
 //Raghav Ends
 
@@ -411,5 +428,6 @@ module.exports = {
     getUnapprovedPatients,
     approvePatient,
     getExams,
+    getPatients,
 };
 
