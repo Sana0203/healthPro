@@ -1,14 +1,15 @@
 // Event listener to handle login form submission
 document.getElementById('loginForm').addEventListener('submit', function (event) {
+document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent form submission
 
-    const userType = document.getElementById('userTypeSelectionLogin').value.trim();
-    const loginID = document.getElementById('loginID').value.trim(); // This will be either HealthID or WorkID
-    const loginPassword = document.getElementById('loginPassword').value.trim();
+    const userType = document.getElementById('userTypeSelectionLogin').value;
+    const loginID = document.getElementById('loginID').value; // Keep it as a string for more flexibility
+    const loginPassword = document.getElementById('loginPassword').value;
 
     // Debugging - log the form data
     console.log('User Type:', userType);
-    console.log('Login ID:', loginID); // This will be HealthID or WorkID
+    console.log('Login ID:', loginID);
     console.log('Login Password:', loginPassword);
 
     // Validate that all required fields are filled
@@ -17,8 +18,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
         return;
     }
 
-    // Validate user type
-    const allowedUserTypes = ['Patient', 'Administrator', 'Doctor', 'Staff'];
+    // Normalize the userType to ensure it is consistent with the expected capitalization (e.g., "Patient")
     const normalizedUserType = userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase();
     if (!allowedUserTypes.includes(normalizedUserType)) {
         alert('Invalid user type selected. Please choose a valid option.');
@@ -58,69 +58,69 @@ document.getElementById('userTypeSelectionLogin').addEventListener('change', fun
 });
 
 // Function to handle login
+    
+    // Debugging - log the normalized user type
+    console.log('Normalized User Type:', normalizedUserType);
+
+    // Send login request to backend using async/await for cleaner code
+    loginUser(loginID, loginPassword, normalizedUserType);
+});
+
 async function loginUser(loginID, loginPassword, userType) {
     try {
-        // Prepare the body of the request based on user type
-        const body = {
-            Password: loginPassword,
-            UserType: userType
-        };
-
-        if (userType === 'Patient') {
-            body.HealthID = loginID;
-        } else {
-            body.WorkID = loginID;
-        }
-
-        // Send login request to backend
         const response = await fetch('http://localhost:5501/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify({ UserID: loginID, Password: loginPassword, UserType: userType })
         });
 
-        // Check if the response is successful
         if (!response.ok) {
-            const errorMessage = `Error: ${response.status} - ${response.statusText}`;
-            throw new Error(errorMessage);
+            throw new Error('Login failed, please try again.');
         }
 
         const data = await response.json();
-        console.log('Response Data:', data);
+        console.log('Response Data:', data); // Log the backend response
 
         if (data.user) {
             const user = data.user;
 
             // Check if patient is approved (if user type is patient)
             if (user.userType === 'Patient' && !user.Approved) {
-                alert('Your account is not approved yet. Please wait for Administrator approval.');
-                return;
-            }
-
-            // Ensure the userType matches the backend response userType
-            if (user.userType !== userType) {
-                alert('User type mismatch. Please try again.');
+                alert('Your account is not approved yet. Please wait for admin approval.');
                 return;
             }
 
             // Store user data in localStorage and handle redirection
             localStorage.setItem('user', JSON.stringify(user));
 
-            // Redirect based on user type
-            const redirectionUrls = {
-                Patient: './dashboard_user.html',
-                Staff: './dashboard_staff.html',
-                Doctor: './dashboard_doctor.html',
-                Administrator: './dashboard_admin.html'
-            };
+            // Ensure userType matches the response
+            if (user.userType !== userType) {
+                alert('Invalid user type.');
+                return;
+            }
 
-            const redirectUrl = redirectionUrls[user.userType];
-            if (redirectUrl) {
-                window.location.href = redirectUrl;
-            } else {
-                alert('Redirection URL not configured for this user type.');
+            // Redirect based on user type
+            switch (user.userType) {
+                case 'Patient':
+                    window.location.href = 'dashboard_patient.html'; // Redirect to patient dashboard
+                    break;
+
+                case 'Staff':
+                    window.location.href = 'dashboard_staff.html'; // Redirect to staff dashboard
+                    break;
+
+                case 'Doctor':
+                    window.location.href = 'dashboard_doctor.html'; // Redirect to doctor dashboard
+                    break;
+
+                case 'Admin':
+                    window.location.href = 'dashboard_admin.html'; // Redirect to admin dashboard
+                    break;
+
+                default:
+                    alert('Invalid user type.');
             }
         } else {
             alert(data.message || 'Invalid credentials. Please try again.');
@@ -128,7 +128,7 @@ async function loginUser(loginID, loginPassword, userType) {
     } catch (error) {
         // Log error and alert the user
         console.error('Error during fetch:', error);
-        alert('An error occurred: ' + error.message);
+        alert('Error: ' + error.message);
     }
 }
 

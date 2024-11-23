@@ -329,6 +329,80 @@ async function approvePatient(healthID) {
     }
 }
 
+//Raghav
+async function getExams() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Patients tables
+    const query = `
+        SELECT * FROM Exams;
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('Unapproved patients query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
+// Function to add a doctor
+async function addExams(examData) {
+    try {
+        const pool = await sql.connect(config);
+        
+        // Start a transaction
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin();
+
+        try {
+            // Insert into Exams table
+            const userInsert = await transaction.request()
+                .input('HealthID', sql.NVarChar, examData.HealthID)
+                .input('DoctorID', sql.NVarChar, examData.DoctorID)
+                .input('ExamDate', sql.Date, examData.ExamDate)
+                .input('ExamType', sql.NVarChar, examData.ExamType)
+                .query('INSERT INTO Exams (ExamType, ExamDate, DoctorID, HealthID) VALUES (@ExamType, @ExamDate, @DoctorID, @HealthID)');
+            
+            await transaction.commit();
+            console.log('Exam added successfully');
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Error during transaction:', error.message);  // Log full error message
+            throw new Error('Failed to add Exam');
+        }
+    } catch (error) {
+        console.error('Database connection error:', error.message);  // Log the connection error
+        throw new Error('Database connection failed');
+    }
+}
+
+
+async function getPatients() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Patients tables
+    const query = `
+        SELECT p.HealthID, u.Name
+        FROM Patients p
+        JOIN Users u ON p.UserID = u.UserID;
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('Test query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
+
+//Raghav Ends
+
 // Exporting the necessary components
 module.exports = {
     sql,
@@ -338,8 +412,12 @@ module.exports = {
     getAllUsers,
     addDoctor,
     addStaff,
+    addExams,
     addAdmin,
     addPatient,
     getUnapprovedPatients,
-    approvePatient
+    approvePatient,
+    getExams,
+    getPatients,
 };
+
