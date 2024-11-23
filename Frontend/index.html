@@ -59,25 +59,28 @@
                     <div class="bg-light rounded shadow-sm p-4">
                         <form id="loginForm" class="w-100">
                             <div class="mb-3">
-                                <label for="userTypeSelectionLogin" class="form-label">User  Type:</label>
-                                <select required id="userTypeSelectionLogin" name="userType" class="form-select border-0" style="height: 55px;">
+                                <label for="userTypeSelectionLogin" class="form-label">User Type:</label>
+                                <select id="userTypeSelectionLogin" name="userType" class="form-select border-0" style="height: 55px;" required>
                                     <option disabled selected value>Select user type</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="staff">Staff</option>
-                                    <option value="patient">Patient</option>
-                                    <option value="doctor">Doctor</option>
+                                    <option value="Administrator">Admin</option>
+                                    <option value="Staff">Staff</option>
+                                    <option value="Patient">Patient</option>
+                                    <option value="Doctor">Doctor</option>
                                 </select>
+                                <div class="invalid-feedback">Please select a valid user type.</div>
                             </div>
                             <div class="mb-3 col-lg-12">
                                 <label for="loginID" class="form-label">ID:</label>
-                                <input type="text" id="loginID" name="loginID" required class="form-control border-0" placeholder="Enter your ID" style="height: 55px;">
+                                <input type="text" id="loginID" name="loginID" class="form-control border-0" placeholder="Enter your ID" style="height: 55px;" required>
+                                <div class="invalid-feedback">ID is required.</div>
                             </div>
                             <div class="mb-3 col-lg-12">
                                 <label for="loginPassword" class="form-label">Password:</label>
-                                <input type="password" id="loginPassword" name="loginPassword" required class="form-control border-0" placeholder="Enter your password" style="height: 55px;">
+                                <input type="password" id="loginPassword" name="loginPassword" class="form-control border-0" placeholder="Enter your password" style="height: 55px;" required>
+                                <div class="invalid-feedback">Password is required.</div>
                             </div>
-                            <div class="mb-3 col-lg-12" id="registerPrompt" style="display: none;">
-                                <p>Not registered? <a href="#" id="registerLink">Register here</a></p>
+                            <div class="mb-3 col-lg-12" id="registerLink" style="display: none;">
+                                <p>Don't have an account? <a href="javascript:void(0);" id="ShowRegisterSection">Register here</a></p>
                             </div>
                             <div class="mb-3 col-lg-12">
                                 <button type="submit" class="btn btn-primary w-100 py-3">Login</button>
@@ -89,6 +92,7 @@
         </div>
     </div>
     <!-- Login End -->
+
  
     <!-- Register Start -->
     <div class="form-container-xl py-5" id="registerSection" style="display: none;">
@@ -165,6 +169,8 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script src="js/script.js"></script>
+    <script src="../HealthPro-backend/db.js"></script>
+
     <script src="js/login.js"></script>
 </body>
 
