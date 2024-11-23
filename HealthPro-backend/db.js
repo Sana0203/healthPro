@@ -225,51 +225,41 @@ async function addAdmin(userData) {
     } 
 }
 
-// Function to add a patient
 async function addPatient(userData) {
-    const pool = await createPool();
     try {
-        // Create a new connection pool
-        const pool = await sql.connect(config);
-        
-        // Start a transaction
+        const pool = await createPool();
         const transaction = new sql.Transaction(pool);
         await transaction.begin();
 
-        try {
-            // Insert user into Users table
-            const userInsert = await transaction.request()
-                .input('UserType', sql.NVarChar, "Patient")
-                .input('Name', sql.NVarChar, userData.Name)
-                .input('Email', sql.NVarChar, userData.Email)
-                .input('PhoneNumber', sql.NVarChar, userData.PhoneNumber)
-                .input('DateOfBirth', sql.Date, userData.DateOfBirth)
-                .input('Password', sql.NVarChar, userData.Password)
-                .input('Image', sql.NVarChar, userData.Image || "")//image is optional
-                .query('INSERT INTO Users (UserType, Name, Email, PhoneNumber, DateOfBirth, Password, Image) OUTPUT INSERTED.UserID VALUES (@UserType, @Name, @Email, @PhoneNumber, @DateOfBirth, @Password, @Image)');
+        // Insert user into the Users table
+        const userInsert = await transaction.request()
+            .input('UserType', sql.NVarChar, "Patient")
+            .input('Name', sql.NVarChar, userData.Name)
+            .input('Email', sql.NVarChar, userData.Email)
+            .input('PhoneNumber', sql.NVarChar, userData.PhoneNumber)
+            .input('DateOfBirth', sql.Date, userData.DateOfBirth)
+            .input('Password', sql.NVarChar, userData.Password)
+            .input('Gender', sql.NVarChar, userData.Gender)
+            .input('Image', sql.NVarChar, userData.Image || "") // Image is optional
+            .input('Removed', sql.Int, 0) // Default value for Removed field is 0
+            .query('INSERT INTO Users (UserType, Name, Email, PhoneNumber, DateOfBirth, Password, Gender, Image, Removed) OUTPUT INSERTED.UserID VALUES (@UserType, @Name, @Email, @PhoneNumber, @DateOfBirth, @Password, @Gender, @Image, @Removed)');
 
-            const userId = userInsert.recordset[0].UserID; // Get the inserted UserID
+        const userId = userInsert.recordset[0].UserID;
 
-            // Insert doctor into Patients table
-            await transaction.request()
-                .input('HealthID', sql.NVarChar, userData.HealthID)
-                .input('Approved', sql.Bit, userData.Approved)
-                .input('UserID', sql.Int, userId) // Use the UserID from the previous insert
-                .query('INSERT INTO Patients (HealthID, UserID, Approved) VALUES (@HealthID, @UserID, @Approved)');
+        // Insert into Patients table
+        await transaction.request()
+            .input('HealthID', sql.NVarChar, userData.HealthID)
+            .input('Approved', sql.Bit, userData.Approved)
+            .input('UserID', sql.Int, userId)
+            .query('INSERT INTO Patients (HealthID, UserID, Approved) VALUES (@HealthID, @UserID, @Approved)');
 
-            // Commit the transaction
-            await transaction.commit();
-            console.log('User and Patient added successfully');
-        } catch (error) {
-            // Rollback the transaction in case of error
-            await transaction.rollback();
-            console.error('Error adding user and patient:', error);
-            throw new Error('Failed to add user and patient');
-        }
+        await transaction.commit(); // Commit the transaction
+        console.log('User and patient added successfully');
     } catch (error) {
-        console.error('Database connection error:', error);
-        throw new Error('Database connection failed');
-    } 
+        await transaction.rollback(); // Rollback in case of error
+        console.error('Error adding user and patient:', error);
+        throw new Error('Failed to add user and patient');
+    }
 }
 
 async function getUnapprovedPatients() {

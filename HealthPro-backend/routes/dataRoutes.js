@@ -151,4 +151,17 @@ router.post('/login', async (req, res) => {
     }
 });
 
+//Route to handle Registration
+router.post('/registerPatient', async (req, res) => {
+    try {
+        const userData = req.body;
+        await addPatient(userData); // Call your addPatient function
+        res.status(200).json({ message: 'Patient registered successfully' });
+    } catch (error) {
+        console.error('Error in /registerPatient route:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 module.exports = router;
