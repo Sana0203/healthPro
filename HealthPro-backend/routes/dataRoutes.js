@@ -189,14 +189,17 @@ router.post('/add_exams', async (req, res) => {
     }
 });
 
-router.get('/get_patients', async (req, res) => { // Include req as a parameter
+router.get('/get_patients', async (req, res) => {
     try {
-        const getPatients = await getPatients(); // Assuming getData() fetches the users
-        console.log("Fetched Patients:", getPatients); // Log the fetched users
-        res.status(200).json(getPatients); // Send a success response with status code 200
+        const patients = await getPatients();
+        console.log("Fetched Patients:", patients);
+        res.status(200).json(patients);
     } catch (error) {
-        console.error('Error fetching patients:', error); // Log the error for debugging
-        res.status(500).json({ error: 'Failed to retrieve patients' }); // Send an error response with status code 500
+        console.error('Error in /get_patients route:', error); // Log detailed error
+        res.status(500).json({ 
+            error: 'Failed to retrieve patients', 
+            details: error.message // Include detailed error message
+        });
     }
 });
 
