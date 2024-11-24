@@ -124,15 +124,12 @@ function getCurrentDate() {
     return today.toISOString().split('T')[0];
 }
 
-document.getElementById("saveExam").addEventListener("click", function () {
-    // Get form values
-    const HealthID = document.getElementById("HealthID").value;
-    const DoctorID = document.getElementById("DoctorID").value;
-    const ExamDate = document.getElementById("ExamDate").value;
-    
-    // const ExamType = document.getElementById('ExamType').value;
+document.getElementById("saveExam").addEventListener("click", async function (event) {
+    event.preventDefault(); // Prevent default form submission
 
-    // Collect selected test values
+    const HealthID = document.getElementById('HealthID').value;
+    const DoctorID = document.getElementById('DoctorID').value || 'D004'; // Default value if not set
+    const ExamDate = document.getElementById('ExamDate').value; // Get the value here
     const testInputs = document.querySelectorAll("input[name^='test']:checked");
     const ExamType = Array.from(testInputs).map((input) => input.value).join(", ");
 
@@ -141,6 +138,18 @@ document.getElementById("saveExam").addEventListener("click", function () {
         alert("Please fill out all required fields.");
         return;
     }
+
+    console.log('HealthID:', HealthID);
+    console.log('DoctorID:', DoctorID);
+    console.log('ExamDate:', ExamDate);
+    console.log('ExamType:', ExamType);
+
+    const examData = {
+        HealthID: HealthID,
+        DoctorID: DoctorID,
+        ExamDate: ExamDate,  // Ensure this is the correct format for a SQL Date
+        ExamType: ExamType
+    };
 
     // Add new row to the table
     const tableBody = document.querySelector("#ExamTable tbody");
@@ -158,60 +167,23 @@ document.getElementById("saveExam").addEventListener("click", function () {
     // Clear the form
     document.getElementById("ExamForm").reset();
 
-    // Optionally trigger the click event of the close button
-    document.querySelector('.btn-secondary[data-dismiss="modal"]').click();
-
     // Close the modal
     $('#ExamModal').modal('hide'); // Requires jQuery
 
-    // Reload the page
-    location.reload(); // This will refresh the page
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById("saveExam").addEventListener("click", async function (event) {
-        event.preventDefault();
-
-        const HealthID = document.getElementById('HealthID');
-        const DoctorID = document.getElementById('DoctorID') || value('D004');
-        const ExamDate = document.getElementById('ExamDate');
-        const testInputs = document.querySelectorAll("input[name^='test']:checked");
-        const ExamType = Array.from(testInputs).map((input) => input.value).join(", ");
-        
-        
-        console.log('HealthID:', HealthID.value);
-        console.log('DoctorID:', DoctorID.value);
-        console.log('ExamDate:', ExamDate.value);
-        console.log('ExamType:', ExamType);
-
-
-        const examData = {
-            HealthID: HealthID.value,
-            DoctorID: "D004",
-            ExamDate: ExamDate.value,  // Ensure this is the correct format for a SQL Date
-            ExamType: ExamType
-        };
-        
-        // Check if any of the required values are missing or invalid
-        console.log(examData);
-
-        fetch('http://localhost:5501/api/add_exams', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(examData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('Error saving exam to backend:', error);
-        });
-        // Reload the page
-        location.reload(); // This will refresh the page
-                
+    // Send data to the backend
+    fetch('http://localhost:5501/api/add_exams', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(examData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Exam saved:', data);
+    })
+    .catch(error => {
+        console.error('Error saving exam to backend:', error);
     });
 });
+
