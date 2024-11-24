@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         const examData = {
-            HealthID: "P009",
+            HealthID: HealthID.value,
             DoctorID: "D004",
             ExamDate: ExamDate.value,  // Ensure this is the correct format for a SQL Date
             ExamType: ExamType

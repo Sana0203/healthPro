@@ -1,6 +1,6 @@
 const express = require('express');
 const sql = require('mssql');
-const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getAllPatients, getAllStaff, getAllDoctors, deleteUser, updateProfile, changeUserPassword } = require('../db'); // Import createPool function
+const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getAllPatients, getAllStaff, getAllDoctors, deleteUser, updateProfile, changeUserPassword, getExams, addExams, getPatients } = require('../db'); // Import createPool function
 const {
     createPool,
     getData,
@@ -259,6 +259,45 @@ router.post('/change_password', async (req, res) => {
     }
 });
 
+// Raghav Change
+
+router.get('/exams', async (req, res) => { // Include req as a parameter
+    try {
+        const exams = await getExams(); // Assuming getData() fetches the users
+        console.log("Fetched exams:", exams); // Log the fetched users
+        res.status(200).json(exams); // Send a success response with status code 200
+    } catch (error) {
+        console.error('Error fetching users:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve users' }); // Send an error response with status code 500
+    }
+});
+
+router.post('/add_exams', async (req, res) => {
+    try {
+        const examData = req.body; // Get doctor data from request body
+        await addExams(examData);// Call the function to add the staff
+        res.status(201).json({ message: 'Exam added successfully' }); // Send success response
+    } catch (error) {
+        console.error('Error adding Exams:', error); // Log the error
+        res.status(500).json({ error: 'Failed to add Exam' }); // Send error response
+    }
+});
+
+router.get('/get_patients', async (req, res) => {
+    try {
+        const patients = await getPatients();
+        console.log("Fetched Patients:", patients);
+        res.status(200).json(patients);
+    } catch (error) {
+        console.error('Error in /get_patients route:', error); // Log detailed error
+        res.status(500).json({ 
+            error: 'Failed to retrieve patients', 
+            details: error.message // Include detailed error message
+        });
+    }
+});
+
+//Raghav Change Ends
 module.exports = router;
 
 
