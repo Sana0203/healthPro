@@ -1,15 +1,6 @@
 const express = require('express');
 const sql = require('mssql');
 const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getAllPatients, getAllStaff, getAllDoctors, deleteUser, updateProfile, changeUserPassword, getExams, addExams, getPatients } = require('../db'); // Import createPool function
-const {
-    createPool,
-    getData,
-    addDoctor,
-    addStaff,
-    addPatient,
-    getUnapprovedPatients,
-    approvePatient,
-} = require('../db');
 
 const router = express.Router();
 
