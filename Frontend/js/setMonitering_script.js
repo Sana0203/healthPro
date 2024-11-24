@@ -74,25 +74,53 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.getElementById('monitoringForm').addEventListener('submit', function(event) {
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Fetch data from the API endpoint
+        const response = await fetch('http://localhost:5501/api/get_monitoring');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const monitoringData = await response.json();
+
+        // Populate the table with the fetched data
+        const tableBody = document.querySelector('#MonitoringTable tbody');
+        monitoringData.forEach((item) => {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${item.PatientID}</td>
+                <td>${item.DoctorID}</td>
+                <td>${item.MonitorField}</td>
+                <td>
+                    <button class="btn btn-outline-danger" onclick="modifyRow(this)">Modify</button>
+                    <button class="btn btn-outline-danger" onclick="deleteRow(this)">Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        });
+    } catch (error) {
+        console.error('Failed to fetch monitoring data:', error);
+    }
+});
+
+document.getElementById('monitoringForm').addEventListener('submit', function (event) {
     // Prevent the form from submitting the traditional way
     event.preventDefault();
 
     // Get the values from the form inputs
     const HealthID = document.getElementById('HealthID').value;
     const DoctorID = document.getElementById('DoctorID').value || 'D004';
-    const monitoringType = document.getElementById('monitoringType').value;
+    const MonitorField = document.getElementById('MonitorField').value;
 
     // Create a new row for the table
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
         <td>${HealthID}</td>
         <td>${DoctorID}</td>
-        <td>${monitoringType}</td>
+        <td>${MonitorField}</td>
         <td>
-        <button class="btn btn-outline-danger" onclick="modifyRow(this)">Modify</button>
-        
-        <button class="btn btn-outline-danger" onclick="deleteRow(this)">Delete</button>
+            <button class="btn btn-outline-danger" onclick="modifyRow(this)">Modify</button>
+            <button class="btn btn-outline-danger" onclick="deleteRow(this)">Delete</button>
         </td>
     `;
 
@@ -102,6 +130,50 @@ document.getElementById('monitoringForm').addEventListener('submit', function(ev
     // Optionally, clear the form fields after submission
     document.getElementById('monitoringForm').reset();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('submit').addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        const HealthID = document.getElementById('HealthID');
+        const DoctorID = document.getElementById('DoctorID') || value ('P004');
+        const MonitorField = document.getElementById('MonitorField').value;
+        
+        
+        console.log('HealthID:', HealthID.value);
+        console.log('DoctorID:', DoctorID.value);
+        console.log('MonitorField:', MonitorField.value);
+
+
+        const monitoringData = {
+            HealthID: "P010",
+            DoctorID: "D004",
+            MonitorField: "ECG"  // Ensure this is the correct format for a SQL Date
+        };
+        
+        // Check if any of the required values are missing or invalid
+        console.log(monitoringData);
+
+        fetch('http://localhost:5501/api/add_monitoring', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(monitoringData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error saving exam to backend:', error);
+        });
+        // // Reload the page
+        // location.reload(); // This will refresh the page
+                
+    });
+});
+
 
 // Function to delete a row
 function deleteRow(button) {
@@ -118,8 +190,8 @@ function modifyRow(button) {
     const row = button.closest('tr');
     
     // Get the current value of the Monitoring Type
-    const monitoringTypeCell = row.cells[2];
-    const currentMonitoringType = monitoringTypeCell.textContent.trim();
+    const MonitorFieldCell = row.cells[2];
+    const currentMonitorField = MonitorFieldCell.textContent.trim();
 
     // Create a select element for modifying the Monitoring Type
     const select = document.createElement('select');
@@ -143,15 +215,15 @@ function modifyRow(button) {
         const option = document.createElement('option');
         option.value = optionValue;
         option.textContent = optionValue;
-        if (optionValue === currentMonitoringType) {
+        if (optionValue === currentMonitorField) {
             option.selected = true; // Select the current value
         }
         select.appendChild(option);
     });
 
     // Replace the cell content with the select
-    monitoringTypeCell.innerHTML = ''; // Clear the cell
-    monitoringTypeCell.appendChild(select); // Add the select
+    MonitorFieldCell.innerHTML = ''; // Clear the cell
+    MonitorFieldCell.appendChild(select); // Add the select
 
     // Change the Modify button to a Save button
     button.textContent = 'Save';
@@ -164,11 +236,11 @@ function saveRow(button) {
     const row = button.closest('tr');
     
     // Get the selected value from the Monitoring Type select
-    const monitoringTypeCell = row.cells[2];
-    const select = monitoringTypeCell.querySelector('select');
+    const MonitorFieldCell = row.cells[2];
+    const select = MonitorFieldCell.querySelector('select');
 
     // Update the cell with the new value
-    monitoringTypeCell.textContent = select.value;
+    MonitorFieldCell.textContent = select.value;
 
     // Change the Save button back to a Modify button
     button.textContent = 'Modify';
