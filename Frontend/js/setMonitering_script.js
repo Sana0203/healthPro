@@ -195,9 +195,9 @@ function modifyRow(button) {
     select.required = true;
 
     const options = [
-        "Blood Test(Routine Hematology)", "Blood Test(Coagulation)", "Blood Test(Routine Chemistry)",
-        "Blood Test(Renal Function)", "Blood Test(Liver Function)", "Blood Test(Pancreas Function)",
-        "Blood Test(Endocrinolog)", "Blood Test(Tumor Markers)", "Urine Test", 
+        "Routine Hematology", "Coagulation", "Routine Chemistry",
+        "Renal Function", "Liver Function", "Pancreas Function",
+        "Endocrinolog", "Tumor Markers", "Urine Test", 
         "Ultrasound", "X-ray", "CT Scan","ECG"
     ];
 
