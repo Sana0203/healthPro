@@ -700,6 +700,118 @@ async function getPatients() {
     }
 }
 
+async function getMonitoring() {
+    const pool = await createPool();
+
+    // SQL query to join Users and Patients tables
+    const query = `
+        SELECT DoctorID, HealthID, MonitorField
+        FROM MonitoringSetup;
+    `;
+
+    try {
+        const result = await pool.request().query(query);
+        console.log('Test query successful:', result.recordset);
+        return result.recordset; // Return the fetched data as an array
+    } catch (err) {
+        console.error('Query failed:', err);
+        throw err; // Optionally throw the error to be handled by the calling function
+    }
+}
+
+async function addMonitoring(monitoringData) {
+    try {
+        const pool = await sql.connect(config);
+        console.log('Database connection established'); // Log the successful DB connection
+
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin();
+
+        try {
+            const userInsert = await transaction.request()
+                .input('HealthID', sql.NVarChar, monitoringData.HealthID)
+                .input('DoctorID', sql.NVarChar, monitoringData.DoctorID)
+                .input('MonitorField', sql.NVarChar, monitoringData.MonitorField)
+                .query('INSERT INTO MonitoringSetup (MonitorField, DoctorID, HealthID) VALUES (@MonitorField, @DoctorID, @HealthID)');
+            
+            await transaction.commit();
+            console.log('Monitoring added successfully');
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Error during transaction:', error.message);
+            throw new Error('Failed to add Monitoring');
+        }
+    } catch (error) {
+        console.error('Database connection error:', error.message); // Log connection error
+        throw new Error('Database connection failed');
+    }
+}
+
+async function deleteMonitoring(deleteData) {
+    try {
+        const pool = await sql.connect(config);
+        
+        // Start a transaction
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin();
+
+        try {
+            // Delete from MonitoringSetup table
+            const userInsert = await transaction.request()
+                .input('HealthID', sql.NVarChar, deleteData.HealthID) // Use correct reference for deleteData
+                .input('DoctorID', sql.NVarChar, deleteData.DoctorID) // Use correct reference
+                .input('MonitorField', sql.NVarChar, deleteData.MonitorField) // Use correct reference for deleteData
+                .query(`
+                    DELETE FROM MonitoringSetup
+                    WHERE HealthID = @HealthID AND DoctorID = @DoctorID AND MonitorField = @MonitorField;
+                `);
+            
+            await transaction.commit();
+            console.log('Monitoring deleted successfully');
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Error during transaction:', error.message);  // Log full error message
+            throw new Error('Failed to delete monitoring');
+        }
+    } catch (error) {
+        console.error('Database connection error:', error.message);  // Log the connection error
+        throw new Error('Database connection failed');
+    }
+}
+
+async function modifyMonitoring(modifyData) {
+    try {
+        const pool = await sql.connect(config);
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin();
+
+        try {
+            await transaction.request()
+                .input('HealthID', sql.NVarChar, modifyData.HealthID)
+                .input('DoctorID', sql.NVarChar, modifyData.DoctorID)
+                .input('MonitorField', sql.NVarChar, modifyData.MonitorField)
+                .input('updatedValue', sql.NVarChar, modifyData.newMonitorField)
+                .query(`
+                    UPDATE MonitoringSetup
+                    SET MonitorField = @updatedValue
+                    WHERE HealthID = @HealthID AND DoctorID = @DoctorID AND MonitorField = @MonitorField;
+                `);
+
+            await transaction.commit();
+            console.log('Monitoring modified successfully');
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Error during transaction:', error.message);
+            throw new Error('Failed to modify monitoring during transaction');
+        }
+    } catch (error) {
+        console.error('Database connection error:', error.message);
+        throw new Error('Failed to connect to the database');
+    }
+}
+
+
+
 
 //Raghav Ends
 
@@ -714,6 +826,8 @@ module.exports = {
     addStaff,
     addAdmin,
     addPatient,
+    getMonitoring,
+    addMonitoring,
     getUnapprovedPatients,
     approvePatient,
     getAllPatients,
@@ -723,6 +837,8 @@ module.exports = {
     getPatients,
     getExams,
     addExams,
+    deleteMonitoring,
+    modifyMonitoring,
     updateProfile,
     changeUserPassword
 };

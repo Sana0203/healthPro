@@ -1,7 +1,7 @@
 let testPrescriptionCount = 0;
+
 // Patients data
-// Function to handle the search and fetch patient data from the backend
-document.getElementById('searchButton').addEventListener('click', function() {
+document.getElementById('searchButton').addEventListener('click', function () {
     const searchInput = document.getElementById('searchInput').value.toLowerCase();
     const resultsContainer = document.getElementById('resultsButtonContainer');
 
@@ -11,52 +11,41 @@ document.getElementById('searchButton').addEventListener('click', function() {
     console.log('Fetching patient data from backend...');
 
     // Fetch data from the backend API
-    fetch('http://localhost:5501/api/get_patients') // URL to your API route
+    fetch('http://localhost:5501/api/get_patients')
         .then(response => {
-            console.log('Response received:', response);
             if (!response.ok) {
                 throw new Error('Failed to fetch patient data from the backend.');
             }
             return response.json();
         })
         .then(data => {
-            console.log('Data received:', data);
-
-            // Filter patients based on search input
-            const filteredPatients = data.filter(patient => 
-                patient.HealthID.toString().includes(searchInput) || 
+            const filteredPatients = data.filter(patient =>
+                patient.HealthID.toString().includes(searchInput) ||
                 patient.Name.toLowerCase().includes(searchInput)
             );
+
+            // If no results found
+            if (filteredPatients.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.textContent = 'No results found';
+                resultsContainer.appendChild(noResults);
+                return;
+            }
 
             // Create buttons for filtered patients
             filteredPatients.forEach(patient => {
                 const button = document.createElement('button');
                 button.className = 'btn btn-outline-primary m-1';
                 button.textContent = `Health ID: ${patient.HealthID}, Name: ${patient.Name}`;
-                
-                // Add a click event to fill the HealthID input and trigger the close button
-                button.addEventListener('click', function() {
-                    console.log(`Button clicked for HealthID: ${patient.HealthID}`); // Debug log
-                    document.getElementById('HealthID').value = patient.HealthID; // Fill the HealthID input
-                    
-                    // Trigger the click event on the closeSearchModal button
+
+                button.addEventListener('click', function () {
+                    document.getElementById('HealthID').value = patient.HealthID;
                     const closeModalButton = document.getElementById('closeSearchModal');
-                    if (closeModalButton) {
-                        closeModalButton.click(); // Close the search modal
-                    } else {
-                        console.warn('closeSearchModal button not found');
-                    }
+                    if (closeModalButton) closeModalButton.click();
                 });
 
                 resultsContainer.appendChild(button);
             });
-
-            // If no results found, show a message
-            if (filteredPatients.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.textContent = 'No results found';
-                resultsContainer.appendChild(noResults);
-            }
         })
         .catch(error => {
             console.error('Failed to fetch data from backend:', error);
@@ -64,31 +53,26 @@ document.getElementById('searchButton').addEventListener('click', function() {
         });
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Retrieve user information from local storage
-    const userInfo = JSON.parse(localStorage.getItem('user'));
-    if (userInfo && userInfo.workID) {
-        document.getElementById('DoctorID').value = userInfo.workID; // Set workID in the element
+// Fetch and populate monitoring table when the document is loaded
+document.addEventListener('DOMContentLoaded', async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.workID) {
+        document.getElementById('DoctorID').value = user.workID;
     } else {
         console.error('WorkID not found or user information is missing.');
     }
-});
 
-document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Fetch data from the API endpoint
         const response = await fetch('http://localhost:5501/api/get_monitoring');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const monitoringData = await response.json();
-
-        // Populate the table with the fetched data
         const tableBody = document.querySelector('#MonitoringTable tbody');
-        monitoringData.forEach((item) => {
+        monitoringData.forEach(item => {
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td>${item.PatientID}</td>
+                <td>${item.HealthID}</td>
                 <td>${item.DoctorID}</td>
                 <td>${item.MonitorField}</td>
                 <td>
@@ -103,146 +87,183 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// Handle monitoring form submission
 document.getElementById('monitoringForm').addEventListener('submit', function (event) {
-    // Prevent the form from submitting the traditional way
     event.preventDefault();
 
-    // Get the values from the form inputs
     const HealthID = document.getElementById('HealthID').value;
     const DoctorID = document.getElementById('DoctorID').value || 'D004';
     const MonitorField = document.getElementById('MonitorField').value;
 
-    // Create a new row for the table
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td>${HealthID}</td>
-        <td>${DoctorID}</td>
-        <td>${MonitorField}</td>
-        <td>
-            <button class="btn btn-outline-danger" onclick="modifyRow(this)">Modify</button>
-            <button class="btn btn-outline-danger" onclick="deleteRow(this)">Delete</button>
-        </td>
-    `;
+    // Create the data object to send
+    const data = {
+        HealthID: HealthID,
+        DoctorID: DoctorID,
+        MonitorField: MonitorField
+    };
 
-    // Append the new row to the MonitoringTable
-    document.querySelector('#MonitoringTable tbody').appendChild(newRow);
+    console.log(data);
 
-    // Optionally, clear the form fields after submission
-    document.getElementById('monitoringForm').reset();
-});
+    // Send the data to the API
+    fetch('http://localhost:5501/api/add_monitoring', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('submit').addEventListener("click", async function (event) {
-        event.preventDefault();
+        // Add new row to the monitoring table
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${HealthID}</td>
+            <td>${DoctorID}</td>
+            <td>${MonitorField}</td>
+            <td>
+                <button class="btn btn-outline-danger" onclick="modifyRow(this)">Modify</button>
+                <button class="btn btn-outline-danger" onclick="deleteRow(this)">Delete</button>
+            </td>
+        `;
 
-        const HealthID = document.getElementById('HealthID');
-        const DoctorID = document.getElementById('DoctorID') || value ('P004');
-        const MonitorField = document.getElementById('MonitorField').value;
-        
-        
-        console.log('HealthID:', HealthID.value);
-        console.log('DoctorID:', DoctorID.value);
-        console.log('MonitorField:', MonitorField.value);
-
-
-        const monitoringData = {
-            HealthID: "P010",
-            DoctorID: "D004",
-            MonitorField: "ECG"  // Ensure this is the correct format for a SQL Date
-        };
-        
-        // Check if any of the required values are missing or invalid
-        console.log(monitoringData);
-
-        fetch('http://localhost:5501/api/add_monitoring', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(monitoringData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('Error saving exam to backend:', error);
-        });
-        // // Reload the page
-        // location.reload(); // This will refresh the page
-                
+        document.querySelector('#MonitoringTable tbody').appendChild(newRow);
+        document.getElementById('monitoringForm').reset();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
     });
 });
-
-
-// Function to delete a row
+// Delete row
+// Delete row with backend connection where HealthID and MonitorField match
 function deleteRow(button) {
-    // Get the row that contains the button
     const row = button.closest('tr');
-    
-    // Remove the row from the table
-    row.remove();
+    const HealthID = row.cells[0].textContent.trim();  // Get HealthID from the first column
+    const DoctorID = row.cells[1].textContent.trim();  // Get DoctorID from the second column
+    const MonitorField = row.cells[2].textContent.trim();  // Get MonitorField from the third column
+
+    console.log('HealthID:', HealthID); 
+    console.log('DoctorID:', DoctorID);
+    console.log('MonitorField:', MonitorField);
+
+    // Prepare the data object for deletion
+    const deleteData = {
+        HealthID: HealthID,
+        DoctorID: DoctorID,
+        MonitorField: MonitorField
+    };
+
+    console.log('Delete Data Object:', deleteData);
+
+    // Send POST request to the backend (as your backend expects POST)
+    fetch('http://localhost:5501/api/delete_monitoring', {
+        method: 'DELETE',  // Use POST method as per your backend code
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(deleteData), // Sending dynamic data from the table
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete the monitoring data.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Backend Response:', data); // Log the response from the backend
+        row.remove();  // Remove the row from the table after successful deletion
+    })
+    .catch(error => {
+        console.error('Error deleting data:', error);
+        alert('Failed to delete the monitoring data.');
+    });
 }
 
-// Function to modify a row
+
+// Modify row
 function modifyRow(button) {
-    // Get the row that contains the button
     const row = button.closest('tr');
-    
-    // Get the current value of the Monitoring Type
     const MonitorFieldCell = row.cells[2];
     const currentMonitorField = MonitorFieldCell.textContent.trim();
 
-    // Create a select element for modifying the Monitoring Type
+    // Store the original MonitorField value in the row as a data attribute
+    row.setAttribute('data-old-monitor-field', currentMonitorField);
+
     const select = document.createElement('select');
-    select.className = 'form-control'; // Add Bootstrap class for styling
+    select.className = 'form-control';
     select.required = true;
 
-    // Array of options for the select dropdown
     const options = [
-        "Routine Hematology",
-        "Coagulation",
-        "Routine Chemistry",
-        "Renal Function",
-        "Liver Function",
-        "Pancreas Function",
-        "Endocrinolog",
-        "Tumor Markers"
+        "Routine Hematology", "Coagulation", "Routine Chemistry",
+        "Renal Function", "Liver Function", "Pancreas Function",
+        "Endocrinolog", "Tumor Markers"
     ];
 
-    // Create options and append to the select
     options.forEach(optionValue => {
         const option = document.createElement('option');
         option.value = optionValue;
         option.textContent = optionValue;
-        if (optionValue === currentMonitorField) {
-            option.selected = true; // Select the current value
-        }
+        if (optionValue === currentMonitorField) option.selected = true;
         select.appendChild(option);
     });
 
-    // Replace the cell content with the select
-    MonitorFieldCell.innerHTML = ''; // Clear the cell
-    MonitorFieldCell.appendChild(select); // Add the select
+    MonitorFieldCell.innerHTML = '';
+    MonitorFieldCell.appendChild(select);
 
-    // Change the Modify button to a Save button
     button.textContent = 'Save';
-    button.setAttribute('onclick', 'saveRow(this)'); // Change the onclick to saveRow
+    button.setAttribute('onclick', 'saveRow(this)');
 }
 
-// Function to save the modified row
+// Save modified row
 function saveRow(button) {
-    // Get the row that contains the button
     const row = button.closest('tr');
-    
-    // Get the selected value from the Monitoring Type select
+    const HealthID = row.cells[0].textContent.trim();
+    const DoctorID = row.cells[1].textContent.trim();
     const MonitorFieldCell = row.cells[2];
     const select = MonitorFieldCell.querySelector('select');
 
-    // Update the cell with the new value
-    MonitorFieldCell.textContent = select.value;
+    const updatedValue = select.value;
+    const MonitorField = row.getAttribute('data-old-monitor-field');
 
-    // Change the Save button back to a Modify button
+    // Update the cell with the new value
+    MonitorFieldCell.textContent = updatedValue;
+
+    console.log('HealthID:', HealthID); 
+    console.log('DoctorID:', DoctorID);
+    console.log('MonitorField:', MonitorField);
+    console.log('newMonitorField:', updatedValue);
+
+    const modifyData = {
+        HealthID: HealthID,
+        DoctorID: DoctorID,
+        MonitorField: MonitorField,
+        newMonitorField: updatedValue
+    };
+
+    console.log('Modify Data Object:', modifyData);
+
+    fetch('http://localhost:5501/api/modify_monitoring', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(modifyData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            console.log('Data saved successfully:', data.message);
+        } else {
+            console.error('Unexpected response:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error saving data:', error);
+        // Optionally, revert changes if the save fails
+        MonitorFieldCell.textContent = MonitorField; // Revert the change
+    });
+
     button.textContent = 'Modify';
-    button.setAttribute('onclick', 'modifyRow(this)'); // Change the onclick back to modifyRow
+    button.setAttribute('onclick', 'modifyRow(this)');
 }

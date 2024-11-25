@@ -1,6 +1,6 @@
 const express = require('express');
 const sql = require('mssql');
-const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getAllPatients, getAllStaff, getAllDoctors, deleteUser, updateProfile, changeUserPassword, getExams, addExams, getPatients } = require('../db'); // Import createPool function
+const { createPool, getData, addDoctor, addStaff, addPatient, getUnapprovedPatients, approvePatient, getAllPatients, getAllStaff, getAllDoctors, deleteUser, updateProfile, changeUserPassword, getExams, addExams, getPatients, getMonitoring, addMonitoring, deleteMonitoring, modifyMonitoring } = require('../db'); // Import createPool function
 
 const router = express.Router();
 
@@ -287,6 +287,62 @@ router.get('/get_patients', async (req, res) => {
         });
     }
 });
+
+router.get('/get_monitoring', async (req, res) => {
+    try {
+        const monitoring = await getMonitoring();
+        res.status(200).json(monitoring);
+    } catch (error) {
+        console.error('Error in /get_monitoring route:', error);
+        res.status(500).json({ error: 'Failed to retrieve monitoring' });
+    }
+});
+
+router.post('/add_monitoring', async (req, res) => {
+    try {
+        console.log('Received monitoring data:', req.body);
+        const monitoringData = req.body;
+
+        // Validate the received data
+        if (!monitoringData.HealthID || !monitoringData.DoctorID || !monitoringData.MonitorField) {
+            throw new Error('Missing required fields in monitoring data');
+        }
+
+        await addMonitoring(monitoringData);
+        res.status(201).json({ message: 'Monitoring added successfully' });
+    } catch (error) {
+        console.error('Error adding Monitoring:', error.message, error.stack);
+        res.status(500).json({ error: error.message || 'Failed to add Monitoring' });
+    }
+});
+
+router.delete('/delete_monitoring', async (req, res) => { 
+    try {
+        const deleteData = req.body; // Get doctor data from request body
+        await deleteMonitoring(deleteData); // Call the function to delete the monitoring
+        res.status(200).json({ message: 'Monitoring deleted successfully' }); // Send success response
+    } catch (error) {
+        console.error('Error deleting monitoring:', error); // Log the error
+        res.status(500).json({ error: 'Failed to delete monitoring' }); // Send error response
+    }
+});
+
+router.post('/modify_monitoring', async (req, res) => {
+    try {
+        const modifyData = req.body;
+        console.log('Received modifyData:', modifyData);  // Log data to check if it's received correctly
+
+        await modifyMonitoring(modifyData);
+
+        res.status(200).json({ message: 'Monitoring modified successfully' });
+    } catch (error) {
+        console.error('Error modifying monitoring:', error);
+        res.status(500).json({ error: 'Failed to modify monitoring' });
+    }
+});
+
+
+
 
 //Raghav Change Ends
 module.exports = router;
