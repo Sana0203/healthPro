@@ -72,7 +72,7 @@ document.getElementById('searchButton').addEventListener('click', function() {
     console.log('Fetching patient data from backend...');
 
     // Fetch data from the backend API
-    fetch('http://localhost:5501/api/get_patients') // URL to your API route
+    fetch('http://localhost:5501/api/get_patientsInfo') // URL to your API route
         .then(response => {
             console.log('Response received:', response);
             if (!response.ok) {

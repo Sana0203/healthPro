@@ -685,9 +685,10 @@ async function getPatients() {
 
     // SQL query to join Users and Patients tables
     const query = `
-        SELECT p.HealthID, u.Name
+        SELECT p.HealthID, u.Name, p.Approved
         FROM Patients p
-        JOIN Users u ON p.UserID = u.UserID;
+        JOIN Users u ON p.UserID = u.UserID
+        WHERE p.Approved = 1
     `;
 
     try {

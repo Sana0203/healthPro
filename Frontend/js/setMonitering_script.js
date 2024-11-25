@@ -1,7 +1,7 @@
 let testPrescriptionCount = 0;
 
 // Patients data
-document.getElementById('searchButton').addEventListener('click', function () {
+document.getElementById('searchButton').addEventListener('click', function() {
     const searchInput = document.getElementById('searchInput').value.toLowerCase();
     const resultsContainer = document.getElementById('resultsButtonContainer');
 
@@ -11,41 +11,46 @@ document.getElementById('searchButton').addEventListener('click', function () {
     console.log('Fetching patient data from backend...');
 
     // Fetch data from the backend API
-    fetch('http://localhost:5501/api/get_patients')
+    fetch('http://localhost:5501/api/get_patientsInfo') // URL to your API route
         .then(response => {
+            console.log('Response received:', response);
             if (!response.ok) {
                 throw new Error('Failed to fetch patient data from the backend.');
             }
             return response.json();
         })
         .then(data => {
-            const filteredPatients = data.filter(patient =>
-                patient.HealthID.toString().includes(searchInput) ||
+            console.log('Data received:', data);
+
+            // Filter patients based on search input
+            const filteredPatients = data.filter(patient => 
+                patient.HealthID.toString().includes(searchInput) || 
                 patient.Name.toLowerCase().includes(searchInput)
             );
-
-            // If no results found
-            if (filteredPatients.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.textContent = 'No results found';
-                resultsContainer.appendChild(noResults);
-                return;
-            }
 
             // Create buttons for filtered patients
             filteredPatients.forEach(patient => {
                 const button = document.createElement('button');
                 button.className = 'btn btn-outline-primary m-1';
                 button.textContent = `Health ID: ${patient.HealthID}, Name: ${patient.Name}`;
-
-                button.addEventListener('click', function () {
-                    document.getElementById('HealthID').value = patient.HealthID;
-                    const closeModalButton = document.getElementById('closeSearchModal');
-                    if (closeModalButton) closeModalButton.click();
+                
+                // Add a click event to fill the HealthID input and trigger the close button
+                button.addEventListener('click', function() {
+                    document.getElementById('HealthID').value = patient.HealthID; // Fill the HealthID input
+                    
+                    // Trigger the click event on the closeSearchModal button
+                    document.getElementById('closeSearchModal').click(); // Close the search modal
                 });
 
                 resultsContainer.appendChild(button);
             });
+
+            // If no results found, show a message
+            if (filteredPatients.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.textContent = 'No results found';
+                resultsContainer.appendChild(noResults);
+            }
         })
         .catch(error => {
             console.error('Failed to fetch data from backend:', error);
