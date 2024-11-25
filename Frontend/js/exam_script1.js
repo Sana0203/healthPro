@@ -27,10 +27,16 @@ function populateExamTable() {
                 const ExamDateCell = newRow.insertCell(2);
                 const ExamTypeCell = newRow.insertCell(3);
 
+                // Format ExamDate as YYYY-MM-DD
+                const examDate = new Date(exam.ExamDate);
+                const formattedDate = examDate.getFullYear() + '-' + 
+                                      String(examDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                                      String(examDate.getDate()).padStart(2, '0');
+
                 // Set the cell values
                 HealthIDCell.textContent = exam.HealthID;
                 DoctorIDCell.textContent = exam.DoctorID;
-                ExamDateCell.textContent = exam.ExamDate;
+                ExamDateCell.textContent = formattedDate;
                 ExamTypeCell.textContent = exam.ExamType;
 
                 console.log('Row added for exam ID:', exam.ExamID);
@@ -170,6 +176,10 @@ document.getElementById("saveExam").addEventListener("click", async function (ev
     // Close the modal
     $('#ExamModal').modal('hide'); // Requires jQuery
 
+    // Optionally trigger the click event of the close button
+    document.querySelector('.btn-secondary[data-dismiss="modal"]').click();
+
+    
     // Send data to the backend
     fetch('http://localhost:5501/api/add_exams', {
         method: 'POST',
